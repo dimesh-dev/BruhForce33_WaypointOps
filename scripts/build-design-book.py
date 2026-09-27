@@ -1,0 +1,54 @@
+from pathlib import Path
+import re, html, base64
+root=Path(__file__).resolve().parent.parent
+source=(root/'docs/DESIGNATHON.md').read_text()
+def inline(s):
+ s=html.escape(s)
+ s=re.sub(r'\*\*(.*?)\*\*',r'<strong>\1</strong>',s)
+ s=re.sub(r'`(.*?)`',r'<code>\1</code>',s)
+ return s
+def markup(s):
+ out=[]
+ for block in s.strip().split('\n\n'):
+  if block.startswith('### '):out.append('<h3>'+inline(block[4:])+'</h3>')
+  elif block.startswith('- '):out.append('<ul>'+''.join('<li>'+inline(x[2:])+'</li>' for x in block.split('\n'))+'</ul>')
+  else:out.append('<p>'+inline(block)+'</p>')
+ return ''.join(out)
+def data_image(name):
+ if name.startswith('public/images/'): return 'images/'+Path(name).name
+ return 'data:image/png;base64,'+base64.b64encode((root/name).read_bytes()).decode()
+css='''*{box-sizing:border-box}body{margin:0;background:#e3e7ef;color:#34455d;font-family:Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}.toolbar{position:sticky;top:0;z-index:20;background:#233047;color:white;display:flex;justify-content:space-between;align-items:center;padding:18px 30px;font-size:13px}.toolbar a,.toolbar button{color:white;background:#526c94;border:0;text-decoration:none;border-radius:6px;padding:10px 16px;font:inherit;cursor:pointer}.toolbar span{font-size:11px;color:#ced9e9}.page{width:1122px;height:794px;margin:28px auto;background:#fafbfd;position:relative;padding:58px 65px;overflow:hidden;box-shadow:0 5px 30px #33455a13;break-after:page}.eyebrow{font-size:9px;letter-spacing:2.5px;color:#667d9e;text-transform:uppercase}h1{font-size:62px;line-height:1.1;letter-spacing:-3px;font-weight:500;margin:38px 0 22px;max-width:650px}h1 em{font-family:Georgia,serif;color:#758eaf;font-weight:400}h2{font-size:30px;letter-spacing:-1px;font-weight:500;margin:22px 0 32px;color:#4a6488}h3{font-size:15px;line-height:1.5;color:#536f92;font-weight:600;break-after:avoid;margin:0 0 13px}.content{column-count:2;column-gap:45px;font-size:12.5px;line-height:1.85;max-height:582px}.content p{margin:0 0 18px;break-inside:avoid}.content strong{font-weight:600;color:#425976}.content ul{padding-left:17px;margin-top:0}.content li{margin-bottom:15px;break-inside:avoid}code{font-size:11px;background:#e8edf5;padding:2px 4px;border-radius:3px}.footer{position:absolute;bottom:30px;left:65px;right:65px;display:flex;justify-content:space-between;border-top:1px solid #dfe5ef;padding-top:16px;font-size:9px;letter-spacing:.6px;color:#7589a4}.cover{background:#f2f5fa}.cover>img{position:absolute;bottom:25px;right:0;width:100%;height:410px;object-fit:cover;z-index:0}.cover .intro{position:relative;z-index:1}.cover .intro>p{font-size:15px;line-height:1.8;color:#6b809f;max-width:530px}.cover .chips{display:flex;gap:10px;margin-top:27px}.chips span{font-size:10px;padding:8px 12px;border:1px solid #cfd9e7;border-radius:30px;background:#ffffff70}.screen{width:100%;height:550px;object-fit:contain;object-position:top;background:#edf1f7;border:1px solid #dce3ef;border-radius:8px}.screen-page{padding-top:36px}.screen-page h2{margin:14px 0 18px;font-size:26px}.caption{font-size:10px;color:#6c81a0;margin-top:12px;line-height:1.6}.phone-pair{display:flex;justify-content:center;gap:40px;height:545px}.phone-pair img{height:100%;max-width:45%;object-fit:contain;border:1px solid #dce4ef;border-radius:12px;background:white}.flow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:15px 0 40px}.flow span{padding:14px;border:1px solid #d7e0ec;border-radius:8px;font-size:11px;background:#eef2f8}.flow b{color:#8aa0bd}.flow+ .content{max-height:485px}.footer strong{font-weight:600;color:#506888}@media print{@page{size:297mm 210mm;margin:0}.toolbar{display:none}.page{width:297mm;height:210mm;margin:0;box-shadow:none;page-break-after:always}.page:last-child{page-break-after:auto}}@media screen and (max-width:1150px){.page{transform-origin:top left;margin:20px 0}.toolbar{width:1122px}}'''
+
+font_css = ''
+for family, package, style in [('Plus Jakarta Sans','plus-jakarta-sans','normal'),('Instrument Serif','instrument-serif','normal'),('Instrument Serif','instrument-serif','italic')]:
+ font_file=root/f'node_modules/@fontsource/{package}/files/{package}-latin-400-{style}.woff2'
+ encoded=base64.b64encode(font_file.read_bytes()).decode()
+ font_css+=f"@font-face{{font-family:'{family}';font-style:{style};font-weight:400;src:url(data:font/woff2;base64,{encoded}) format('woff2');}}"
+css=font_css+css+"""body{font-family:'Plus Jakarta Sans',sans-serif}h1,h2,h3{font-family:'Instrument Serif',Georgia,serif;font-weight:400}h1{font-size:77px;line-height:1;letter-spacing:-2px;max-width:730px;margin-top:34px}h1 em{font-family:'Instrument Serif',Georgia,serif}h2{font-size:38px;letter-spacing:-.5px;margin-top:19px;max-width:790px}h3{font-size:23px;line-height:1.15;margin-bottom:12px}.content{font-size:11.5px;line-height:1.85;position:relative;z-index:1}.content strong{font-weight:600}.page-sketch{position:absolute;right:22px;top:7px;width:210px;height:140px;object-fit:cover;object-position:right center;mix-blend-mode:multiply;opacity:.85}.page>.eyebrow,.page>h2{position:relative;z-index:2}.cover .intro>p{font-size:14px}.illustration-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:30px}.illustration-grid figure{margin:0;background:white;border:1px solid #dfe5ef;border-radius:10px;overflow:hidden}.illustration-grid img{width:100%;height:250px;object-fit:cover;object-position:right center}.illustration-grid figcaption{padding:20px}.illustration-grid h3{font-size:27px;margin:0 0 12px}.illustration-grid p{font-size:11px;line-height:1.9;color:#687e9b}.gallery-lead{font-family:'Instrument Serif',Georgia,serif;font-size:27px;color:#7188a7;max-width:650px;line-height:1.3}.screen-page h2{font-size:34px}.cover>img{height:405px}"""
+pages=[]
+def footer(n):return f'<footer class="footer"><strong>waypoint. &nbsp; Thoughtfully connected.</strong><span>TECH-TRIATHLON 2026 · DESIGNATHON</span><span>{n:02d}</span></footer>'
+cover=f'''<section class="page cover"><div class="intro"><div class="eyebrow">DESIGNATHON 2026 · DESIGN BOOK</div><h1>Big picture.<br/><em>Every little delivery.</em></h1><p>A connected delivery experience for the people<br/>who keep Waypoint moving.</p><div class="chips"><span>4 roles · 1 shared journey</span><span>2 designed failure scenarios</span><span>Next.js · React · TypeScript · Tailwind</span></div></div><img alt="Original watercolor sketch of a logistics team" src="{data_image('public/images/waypoint-team-sketch.png')}"/>{footer(1)}</section>'''
+pages.append(cover)
+for section in re.split(r'^## ',source,flags=re.M)[1:]:
+ title,body=section.split('\n',1)
+ flow='<div class="flow"><span>Store order</span><b>→</b><span>Dispatch decision</span><b>→</b><span>Dock readiness</span><b>→</b><span>Driver proof</span><b>→</b><span>Store receipt</span></div>' if title.startswith('04') else ''
+ art_names=['dispatch-studio','fleet-yard','waypoint-team-sketch','island-network','dispatch-studio','loading-dock','on-the-road','neighborhood-store','on-the-road','loading-dock','island-network','dispatch-studio']
+ art=art_names[int(title[:2])-1]
+ pages.append(f'<section class="page"><img class="page-sketch" alt="" src="{data_image("public/images/"+art+".png")}"/><div class="eyebrow">THE WAYPOINT EXPERIENCE</div><h2>{inline(title)}</h2>{flow}<div class="content">{markup(body)}</div>{footer(len(pages)+1)}</section>')
+for group,title in [([('dispatch-studio','Consider the whole journey.','Dispatcher workspace'),('loading-dock','Care begins at the dock.','Loader experience'),('on-the-road','A familiar face, on the road.','Driver experience')],'The people who keep us moving.'),([('neighborhood-store','Every doorstep matters.','Store experience'),('fleet-yard','Good journeys start here.','Fleet workspace'),('island-network','A little room for tomorrow.','Planning and insights')],'The places that connect us.')]:
+ figures=''.join(f'<figure><img alt="{caption}" src="{data_image("public/images/"+name+".png")}"/><figcaption><h3>{caption}</h3><p>{place} · Original pencil and watercolor illustration, generated using the supplied style reference.</p></figcaption></figure>' for name,caption,place in group)
+ pages.append(f'<section class="page"><div class="eyebrow">FIELD NOTES · THE ILLUSTRATION SYSTEM</div><h2>{title}</h2><p class="gallery-lead">One visual language. A distinct story for every person and place.</p><div class="illustration-grid">{figures}</div>{footer(len(pages)+1)}</section>')
+for title,name,caption in [
+ ('Overview · A clear view of the network','overview-screen.png','Dispatcher overview. Selectable schematic routes, sample operations metrics and actionable exceptions.'),
+ ('Failure · A mall window is closing','failure-window-screen.png','Compare the actual receiving constraint with the illustrative ETA, choose a reason, and preserve the next handoff.'),
+ ('Loading dock · Ready in the right order','loader-screen.png','Reverse stop sequence, checked cargo, version context and a shortfall report before departure.'),
+ ('Driver · Signal lost, proof protected','driver-offline-screen.png','A clear offline banner, a local proof queue, and a deliberate reconnection step. This is a designed offline simulation.'),
+ ('Store · Close the loop','store-screen.png','Delivery status, receiving expectations, proof-based receipt, deferral context and next-run ordering.'),
+]:
+ f=root/'docs'/name
+ if f.exists():pages.append(f'<section class="page screen-page"><div class="eyebrow">HIGH-FIDELITY PROTOTYPE</div><h2>{title}</h2><img class="screen" alt="{html.escape(title)}" src="{data_image("docs/"+name)}"/><p class="caption">{caption}</p>{footer(len(pages)+1)}</section>')
+if (root/'docs/driver-mobile-screen.png').exists():
+ pages.append(f'<section class="page screen-page"><div class="eyebrow">RESPONSIVE ROLE EXPERIENCES</div><h2>A phone at the dock. A phone on the road.</h2><div class="phone-pair"><img alt="Loader on a phone" src="{data_image("docs/loader-mobile-screen.png")}"/><img alt="Driver offline on a phone" src="{data_image("docs/driver-mobile-screen.png")}"/></div><p class="caption">390px layouts. Clear primary actions, readable context, responsive cards and an accessible navigation drawer.</p>{footer(len(pages)+1)}</section>')
+doc='<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Waypoint · Designathon Design Book</title><style>'+css+'</style></head><body><nav class="toolbar"><a href="/">← Open prototype</a><span>DESIGNATHON · PERSONAS / FLOWS / RATIONALE / FAILURE SCENARIOS / DISCLOSURE</span><button onclick="window.print()">Print / save PDF</button></nav>'+''.join(pages)+'</body></html>'
+(root/'public/design-book.html').write_text(doc)
+print(f'Built {len(pages)} design-book pages.')
