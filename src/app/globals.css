@@ -1,7 +1,7 @@
 @import "tailwindcss";
 :root {
   font-family:
-    "Plus Jakarta Sans",
+    "DM Sans Variable",
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
@@ -89,7 +89,7 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "DM Sans Variable", sans-serif;
 }
 svg {
   flex-shrink: 0;
@@ -281,7 +281,7 @@ input[type="checkbox"] {
   vertical-align: middle;
 }
 .network-card p {
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "DM Sans Variable", sans-serif;
   font-size: 13px;
   line-height: 1.9;
   margin: 14px 0;
@@ -712,14 +712,14 @@ main {
   height: 57px;
 }
 .metric-value {
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "DM Sans Variable", sans-serif;
   font-size: 31px;
   letter-spacing: -1.5px;
   font-weight: 600;
   white-space: nowrap;
 }
 .metric-value small {
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "DM Sans Variable", sans-serif;
   font-size: 14px;
   font-weight: 400;
   letter-spacing: 0;
@@ -851,7 +851,7 @@ main {
 }
 .map-city {
   font-size: 9px;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "DM Sans Variable", sans-serif;
   letter-spacing: 1.5px;
   fill: #818c80;
   font-weight: 550;
@@ -1015,7 +1015,7 @@ main {
 }
 .subtle-count {
   font-size: 9px;
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "DM Sans Variable", sans-serif;
   color: #949caa;
   background: #f1f3f6;
   border-radius: 4px;
@@ -4742,7 +4742,7 @@ th {
 }
 /* Waypoint / Field Notes — an illustrated editorial design system. */
 :root {
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "DM Sans Variable", sans-serif;
   --canvas: #f8f8f5;
   --ink: #29384a;
   --line: #e5e7e5;
@@ -4756,7 +4756,7 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "DM Sans Variable", sans-serif;
 }
 main {
   padding-top: 32px;
@@ -4768,7 +4768,7 @@ main {
   background: #243242;
 }
 .wordmark {
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "DM Sans Variable", sans-serif;
   letter-spacing: -1.7px;
   font-size: 26px;
 }
@@ -4831,8 +4831,8 @@ main {
 }
 .hero h2,
 .hero-copy h2 {
-  font-family: "Instrument Serif", Georgia, serif;
-  font-size: 65px;
+  font-family: "Fraunces Variable", Georgia, serif;
+  font-size: 56px;
   font-weight: 400;
   letter-spacing: -1.9px;
   line-height: 1.04;
@@ -4840,7 +4840,7 @@ main {
   color: #34465d;
 }
 .hero h2 em {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: inherit;
   font-weight: 400;
   color: #6983a6;
@@ -4872,7 +4872,7 @@ main {
   box-shadow: 0 4px 18px #48618408;
 }
 .hero-stats b {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 29px;
   font-weight: 400;
   margin-bottom: 4px;
@@ -4886,7 +4886,7 @@ main {
   right: 25px;
 }
 .page-heading h1 {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 43px;
   font-weight: 400;
   line-height: 1.14;
@@ -4923,13 +4923,13 @@ main {
   margin: 25px 0;
 }
 .metric-value {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 43px;
   font-weight: 400;
   letter-spacing: -1.7px;
 }
 .metric-value small {
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "DM Sans Variable", sans-serif;
   font-size: 13px;
   margin-left: 5px;
 }
@@ -4973,7 +4973,7 @@ main {
   padding: 22px 23px;
 }
 .route-facts b {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 29px;
   font-weight: 400;
 }
@@ -5006,7 +5006,7 @@ main {
   font-size: 10px;
 }
 .map-city {
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "DM Sans Variable", sans-serif;
 }
 .attention-strip {
   padding: 19px 23px;
@@ -5064,7 +5064,7 @@ main {
   padding-bottom: 17px;
 }
 .modal-header h2 {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 33px;
   font-weight: 400;
   line-height: 1.1;
@@ -5076,7 +5076,7 @@ main {
   padding-top: 25px;
 }
 .success-state h3 {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 31px;
   font-weight: 400;
 }
@@ -5117,7 +5117,7 @@ main {
   max-width: 53%;
 }
 .banner-copy h2 {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 52px;
   line-height: 1.02;
   font-weight: 400;
@@ -5169,7 +5169,7 @@ main {
   gap: 20px;
 }
 .section-editorial h2 {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 37px;
   font-weight: 400;
   letter-spacing: -0.7px;
@@ -5234,7 +5234,7 @@ main {
   position: absolute;
   top: 15px;
   left: 18px;
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 24px;
   color: #7d92ad;
 }
@@ -5249,7 +5249,7 @@ main {
   color: #72829a;
 }
 .journey-card-copy h3 {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 25px;
   letter-spacing: -0.3px;
   font-weight: 400;
@@ -5303,7 +5303,7 @@ main {
   z-index: 0;
 }
 .planning-banner h2 {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 48px;
   font-weight: 400;
   line-height: 1.05;
@@ -5341,7 +5341,7 @@ main {
   color: #637957;
 }
 .outlet-art > span {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 27px;
   color: #455b45;
 }
@@ -5362,7 +5362,7 @@ main {
     url("/images/neighborhood-store.png");
 }
 .fleet-card h2 {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 29px;
   font-weight: 400;
 }
@@ -5432,7 +5432,7 @@ main {
   font-size: 7px;
 }
 .context-panel h2 {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 34px;
   line-height: 1.08;
   font-weight: 400;
@@ -5440,24 +5440,24 @@ main {
   letter-spacing: -0.5px;
 }
 .task-panel .panel-header h2 {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 31px;
   font-weight: 400;
   line-height: 1.1;
 }
 .driver-stop h2 {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 37px;
   font-weight: 400;
   letter-spacing: -0.7px;
 }
 .arrival-time {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 72px;
   font-weight: 400;
 }
 .arrival-time > span {
-  font-family: "Plus Jakarta Sans", sans-serif;
+  font-family: "DM Sans Variable", sans-serif;
   font-size: 14px;
 }
 .arrival-time small {
@@ -5485,12 +5485,12 @@ main {
   height: 290px;
 }
 .order-cutoff b {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 41px;
   font-weight: 400;
 }
 .chart-panel .panel-header h2 {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 29px;
   font-weight: 400;
 }
@@ -5498,7 +5498,7 @@ main {
   font-size: 7px;
 }
 .progress-ring b {
-  font-family: "Instrument Serif", Georgia, serif;
+  font-family: "Fraunces Variable", Georgia, serif;
   font-size: 43px;
 }
 @media (min-width: 1550px) {
@@ -5509,7 +5509,7 @@ main {
     padding: 39px 43px;
   }
   .hero h2 {
-    font-size: 76px;
+    font-size: 64px;
   }
   .hero-copy p {
     font-size: 13px;
@@ -5547,7 +5547,7 @@ main {
 }
 @media (max-width: 1200px) {
   .hero h2 {
-    font-size: 56px;
+    font-size: 48px;
   }
   .hero-copy {
     padding: 30px;
@@ -5668,7 +5668,7 @@ main {
 }
 @media (max-width: 1000px) and (min-width: 701px) {
   .hero h2 {
-    font-size: 50px;
+    font-size: 44px;
   }
   .hero {
     min-height: 300px;
@@ -5809,7 +5809,7 @@ main {
   }
   .hero h2,
   .hero-copy h2 {
-    font-size: 50px;
+    font-size: 40px;
     line-height: 1.02;
     letter-spacing: -1.3px;
     margin-top: 21px;

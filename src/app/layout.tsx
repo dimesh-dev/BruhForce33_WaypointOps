@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import "@fontsource/plus-jakarta-sans/400.css";
-import "@fontsource/plus-jakarta-sans/500.css";
-import "@fontsource/plus-jakarta-sans/600.css";
+import "@fontsource-variable/dm-sans/index.css";
+import "@fontsource-variable/dm-sans/wght-italic.css";
+import "@fontsource-variable/fraunces/opsz.css";
+import "@fontsource-variable/fraunces/opsz-italic.css";
+// Plus Jakarta Sans is kept only for the Waypoint wordmark.
 import "@fontsource/plus-jakarta-sans/700.css";
-import "@fontsource/instrument-serif/400.css";
-import "@fontsource/instrument-serif/400-italic.css";
 import "./globals.css";
 export const metadata: Metadata = {
   title: "Waypoint — A better way forward",
