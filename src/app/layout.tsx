@@ -7,7 +7,7 @@ import "@fontsource-variable/fraunces/opsz-italic.css";
 import "@fontsource/plus-jakarta-sans/700.css";
 import "./globals.css";
 export const metadata: Metadata = {
-  title: "Waypoint — A better way forward",
+  title: "Waypoint · A better way forward",
   description:
     "A connected delivery experience. Interactive Designathon prototype for Waypoint Group.",
   icons: { icon: "/favicon.svg" },

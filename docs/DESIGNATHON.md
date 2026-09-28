@@ -4,7 +4,7 @@
 
 **A clear view of every delivery. A better start to the day.** Waypoint replaces disconnected planning sheets, loading lists, phone updates and handwritten receipts with one understandable delivery record. The core design question is: when every order cannot be served, how can one team make a decision that the next team can act on?
 
-The prototype prioritizes an explainable dispatcher decision, its dock handoff, an offline delivery record and a store acknowledgement. It is a high-fidelity interactive design artifact in Next.js, React, TypeScript and Tailwind CSS. It is not the Hackathon implementation: allocation, routing, forecasting, live telemetry, authentication and a backend are intentionally outside this phase.
+The prototype prioritizes an explainable dispatcher decision, its dock handoff, an offline delivery record and a store acknowledgement. It is presented as a high-fidelity clickable prototype that walks through each role's screens and the two failure scenarios. Allocation, routing, forecasting, live tracking and account management are intentionally outside this design phase.
 
 The supplied challenge booklet establishes four working contexts and six important operational checks. It is source material for the design, not authorization to publish, contact anyone, or submit a competition entry. No submission has been made.
 
@@ -40,7 +40,7 @@ The supplied challenge booklet establishes four working contexts and six importa
 
 Store order → cutoff acknowledgement → dispatcher queue → route/constraint review → explicit allocation or deferral → plan publication → loader reverse sequence → readiness or shortfall → driver delivery proof → offline queue if needed → reconnection → store receipt or issue.
 
-**Normal walkthrough:** Dispatcher publishes the representative plan. Loader sees v2, checks three sample loads, and marks the vehicle ready. Driver records proof for WP-2041. Store manager sees delivery completion and confirms receipt. Status and notifications are shared within this browser session and survive refresh.
+**Normal walkthrough:** Dispatcher publishes the representative plan. Loader sees v2, checks three sample loads, and marks the vehicle ready. Driver records proof for WP-2041. Store manager sees delivery completion and confirms receipt. Status and notifications carry across all four roles in the prototype.
 
 **Exception walkthrough:** Dispatcher reviews WP-2043, sees the 12-minute mall conflict, records a reason and defers it. Store manager selects Style · Colombo City Centre and sees the reason and next-run notice. An existing Kadawatha deferral remains visible for priority review.
 
@@ -76,7 +76,7 @@ Store order → cutoff acknowledgement → dispatcher queue → route/constraint
 
 **Next-day order.** Separate chilled and ambient choices make vehicle needs explicit. Before the 4 PM cutoff, the sample order is acknowledged for Tuesday; the after-cutoff toggle demonstrates Wednesday routing. Acknowledgement does not claim that an unassigned order already has a vehicle. This form illustrates the Fresh order journey; Style weekly scheduling and Tech item-level requests need their own future variants.
 
-## 08 · Failure scenario A — A mall window is closing
+## 08 · Failure scenario A: A mall window is closing
 
 **Why it matters.** Style deliveries can consume volume before weight, and mall bays have fixed access windows. Sending a driver to a closed bay wastes time, quota and capacity that another outlet might need. A “late” label alone gives the dispatcher neither an action nor a defensible record.
 
@@ -84,19 +84,23 @@ Store order → cutoff acknowledgement → dispatcher queue → route/constraint
 
 **Boundaries.** Tuesday is the next eligible operating run in this fixed scenario, not a guaranteed delivery slot. Actual rescheduling must honor the outlet's calendar and brand schedule. A production version needs an auditable actor/time history, receiving-window approval and constrained reallocation; this phase demonstrates decision quality and communication.
 
-## 09 · Failure scenario B — Signal lost, proof protected
+## 09 · Failure scenario B: Signal lost, proof protected
 
 **Why it matters.** Coverage loss in the Kandy corridor and rural districts must not force the driver to reconstruct receiving evidence later. The problem is not only whether a form can be submitted: the driver must know whether it is saved and whether the store can see it.
 
 **Designed response.** “Simulate offline” changes the connection banner and delivery action to “Save proof offline.” A local queue stores the proof and survives refresh. The delivered status does not reach the store until “Reconnect & sync.” A pending state prevents the same order from being completed again. After synchronization the store may confirm receipt.
 
-**Recovery and limitations.** This is a simulated connection state using localStorage after the app is loaded, not a service worker or real backend sync. It cannot cold-start offline or synchronize across devices. Clearing browser storage loses the demonstration records. The later implementation should use durable IndexedDB, operation IDs, server acknowledgement, retry/backoff and explicit conflict review. For a conflict, retain both proofs and show a dispatcher review task; never overwrite a completed receipt silently. The conflict policy is documented, not implemented.
+**Recovery and limitations.** The prototype shows the offline experience as designed states: signal lost, proof saved on the device, waiting to sync, and synced. It does not demonstrate a real network connection or synchronization across devices. When this is built, each saved record needs a unique reference and a confirmation from the server, retries should happen automatically, and any conflict should go to review. For a conflict, keep both proofs and show the dispatcher a review task; never overwrite a completed receipt silently.
 
 ## 10 · Visual system and interaction principles
 
 **Art direction:** soft pencil crosshatching, dusty-blue/lavender watercolor washes, sage botanicals, warm human skin tones and white paper edges. The user-supplied recruitment sketch established the requested style. The selected artwork is an original logistics scene, not the recruitment image reused as a background.
 
-**Palette:** slate sidebar #232D3C; blue primary #5C759C; canvas #F5F6F8; white surfaces; sage, amber and lavender status accents. Darker slate ink is used for operational copy, with textual status labels and icons alongside color. Plus Jakarta Sans handles readable controls and operational copy. Instrument Serif, in regular and italic styles, provides expressive editorial headings. Both families are bundled locally. Seven original pencil/watercolor scenes form a coherent illustration system across the overview, all four roles, fleet, outlets and capacity planning. Clickable illustrated journey cards connect the role experiences.
+**Palette:** slate sidebar #232D3C; dusty-blue primary #5C759C; canvas #F8F8F5; white paper surfaces; ink #29384A for operational copy. Status pairs a tinted surface with a darker label: info blue #EEF2F8/#4C6589, success sage #EDF3E9/#4E6942, warning amber #FAF3E7/#80602E and offline sand #F7EEDC/#8A6F3E. Brand tints are Fresh #587046, Style #946740 and Tech #7B609B, used on text and icons only. Status always carries a text label; color never stands alone.
+
+**Typography:** Fraunces (Google Fonts, variable optical size, Regular and Italic) sets expressive headings, greetings and key numbers, from a 56px hero to 25px card headlines. DM Sans (Google Fonts, variable) sets every control, label and line of operational copy: 15px section titles, 13px body, 11px buttons, 9px badges and 8px uppercase eyebrows. The Waypoint wordmark alone keeps Plus Jakarta Sans Bold beside a Georgia italic “w” mark. Both families are bundled locally. Seven original pencil/watercolor scenes form a coherent illustration system across the overview, all four roles, fleet, outlets and capacity planning. Clickable illustrated journey cards connect the role experiences.
+
+**Shape and spacing:** a 4px base grid; corner radii of 4px (badges), 7px (buttons and inputs), 9-11px (cards) and 16px (dialogs); 1px line borders instead of heavy shadows, which are reserved for dialogs, menus and toasts. Lucide line icons at 2px stroke are always paired with a label. The full style guide, with color variables, text styles and Button, Status Badge and Connectivity Banner components, is a separate page in the Figma design file.
 
 **Components:** compact global navigation; role switch; responsive cards; selectable routes; capacity bars; labeled status badges; filterable table; focused dialogs; inline error/recovery states; toast feedback; and a guided role tour. Dialogs use focus containment and Escape dismissal. A skip link, semantic controls, labeled inputs, reduced-motion handling and mobile layouts support accessibility. Automated audits are useful evidence, not a substitute for testing with users and assistive technology.
 
@@ -108,8 +112,10 @@ Store order → cutoff acknowledgement → dispatcher queue → route/constraint
 
 ## 12 · AI disclosure and submission readiness
 
-**AI-assisted work:** Codex read the provided brief, synthesized composite personas, proposed flows, wrote the Next.js/React/TypeScript/Tailwind prototype, authored the explanatory documents and browser tests, and iterated on layout. The built-in image generation tool created the selected logistics illustration from a prompt and the user-provided style reference. The exact prompts and asset paths are in `docs/ART-DIRECTION.md` and `docs/ILLUSTRATION-SYSTEM.md`.
+**AI-assisted work:** Codex read the provided brief, synthesized composite personas, proposed flows, built the interactive prototype screens, authored the explanatory documents, and iterated on layout. The built-in image generation tool created the selected logistics illustration from a prompt and the user-provided style reference. The exact prompts and asset paths are in `docs/ART-DIRECTION.md` and `docs/ILLUSTRATION-SYSTEM.md`.
 
-**Human-provided inputs:** the challenge booklet, the user's Designathon-only scope, the requested technology stack and the sketch style reference. No human interviews, field visits or independent human code/design review are claimed. No predictive models were trained. No real operational service is connected.
+**Figma work:** Claude (Anthropic) was used to capture the prototype screens into Figma, lay out the three screen flows, wire the clickable prototype and build the style guide page, all reviewed and directed by the team.
 
-**Before submission:** replace TeamName with the actual team name; reconcile the demonstration records with the supplied shared CSVs if required by the organizers; review all assumptions; host the prototype to obtain a shareable URL; review the captioned local 3–5 minute walkthrough video (or record narration using the supplied script); upload the video as unlisted; and place the final URLs in the form. The generated design-book PDF/HTML and source package are local review artifacts. Hosting, YouTube upload and competition submission have not been performed.
+**Human-provided inputs:** the challenge booklet, the team's Designathon-only scope, the choice of which problems to prioritize, the font pairing and the sketch style reference. No human interviews, field visits or independent external design review are claimed. No predictive models were trained. No real operational service is connected.
+
+**Before submission:** replace TeamName with the actual team name; reconcile the demonstration records with the supplied shared CSVs if required by the organizers; review all assumptions; host the prototype to obtain a shareable URL; review the captioned local 3-5 minute walkthrough video (or record narration using the supplied script); upload the video as unlisted; and place the final URLs in the form. The design book PDF and Figma file are review artifacts. Hosting, YouTube upload and competition submission have not been performed.

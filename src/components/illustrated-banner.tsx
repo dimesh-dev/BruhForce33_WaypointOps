@@ -41,7 +41,7 @@ export function IllustratedBanner({
         <p>{description}</p>
       </div>
       <span className="art-edition">
-        THE WAYPOINT JOURNAL <span>—</span> FIELD NOTES, NO. 01
+        THE WAYPOINT JOURNAL <span>·</span> FIELD NOTES, NO. 01
       </span>
     </section>
   );

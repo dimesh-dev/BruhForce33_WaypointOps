@@ -291,7 +291,7 @@ export function RoleExperience({
                 <span>
                   <Clock3 size={18} />
                   <small>Receiving window</small>
-                  <b>06:00 – 07:30</b>
+                  <b>06:00 - 07:30</b>
                 </span>
                 <span>
                   <Snowflake size={18} />
