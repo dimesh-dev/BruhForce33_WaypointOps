@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: "Waypoint · A better way forward",
   description:
     "A connected delivery experience. Interactive Designathon prototype for Waypoint Group.",
-  icons: { icon: "/favicon.svg" },
+  icons: { icon: "/favicon.svg", apple: "/apple-touch-icon.png" },
 };
 export default function RootLayout({
   children,
