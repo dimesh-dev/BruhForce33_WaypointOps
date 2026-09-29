@@ -255,7 +255,7 @@ export function Modal({
                     onClick={() => {
                       updateOrder(selected, {
                         status: choice === "defer" ? "Deferred" : "At risk",
-                        reason: reason + (note ? ` — ${note}` : ""),
+                        reason: reason + (note ? `. ${note}` : ""),
                         eta: choice === "defer" ? "Next run" : exception.eta,
                       });
                       addEvent(
@@ -634,7 +634,7 @@ export function Modal({
                     district: "Colombo",
                     amount: `${Number(count) * 20} kg`,
                     volume: `${(Number(count) * 0.15).toFixed(1)} m³`,
-                    window: "06:00 – 07:30",
+                    window: "06:00 - 07:30",
                     temp,
                     status: "Scheduled",
                     eta: late ? "Wed 30 Sep" : "Tue 29 Sep",
