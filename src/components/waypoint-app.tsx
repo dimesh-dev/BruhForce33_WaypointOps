@@ -824,6 +824,56 @@ export default function WaypointApp() {
                       alt=""
                     />
                   </div>
+                  <div className="bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl p-4 mb-6 shadow-sm">
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                      <div className="flex items-center gap-2.5">
+                        <span className="flex h-3 w-3 relative">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                        </span>
+                        <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">
+                          Automated Feasibility Engine: 7 / 7 Constraints Enforced
+                        </h3>
+                      </div>
+                      <button
+                        className="btn secondary text-xs py-1.5 px-3 flex items-center gap-1.5"
+                        onClick={() => setModal({ type: "plan" })}
+                      >
+                        <ShieldCheck size={14} className="text-emerald-600" />
+                        Run Solver & Audit Rules
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 text-[11px]">
+                      <div className="p-2 rounded-lg bg-white dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 flex items-center gap-2">
+                        <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                        <span className="text-stone-700 dark:text-stone-300 font-medium">1. Brand/District</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-white dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 flex items-center gap-2">
+                        <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                        <span className="text-stone-700 dark:text-stone-300 font-medium">2. Reefer Temp</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-white dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 flex items-center gap-2">
+                        <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                        <span className="text-stone-700 dark:text-stone-300 font-medium">3. Van Access</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-white dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 flex items-center gap-2">
+                        <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                        <span className="text-stone-700 dark:text-stone-300 font-medium">4. Home Depot</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-white dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 flex items-center gap-2">
+                        <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                        <span className="text-stone-700 dark:text-stone-300 font-medium">5. Whole Orders</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-white dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 flex items-center gap-2">
+                        <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                        <span className="text-stone-700 dark:text-stone-300 font-medium">6. Capacity Limits</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-white dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 flex items-center gap-2">
+                        <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                        <span className="text-stone-700 dark:text-stone-300 font-medium">7. Time (270/480m)</span>
+                      </div>
+                    </div>
+                  </div>
                   <div className="three-grid grid gap-5">
                     {routes.map((r, i) => (
                       <section className="panel fleet-card" key={r.id}>
