@@ -6175,4 +6175,20 @@ main {
 .journey-card-copy p {
   color: #5d6f86;
 }
-.sidebar{overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:#526278 transparent}.sidebar-bottom{flex-shrink:0}.profile{background:#243242}.workspace,.sidebar nav,.nav-divider{flex-shrink:0}
+.sidebar {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #526278 transparent;
+}
+.sidebar-bottom {
+  flex-shrink: 0;
+}
+.profile {
+  background: #243242;
+}
+.workspace,
+.sidebar nav,
+.nav-divider {
+  flex-shrink: 0;
+}
