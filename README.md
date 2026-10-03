@@ -140,8 +140,7 @@ The build keeps the Day 5 flows, screens, copy and visual system (palette, Fraun
 ## Submission checklist (team)
 
 - [x] Official shared datasets (General Data) loaded from `data/`.
-- [ ] Rename the repository to `TeamName_SolutionName` (GitHub monorepo).
+- [x] Rename the repository to `TeamName_SolutionName` (GitHub monorepo).
 - [x] Deploy (Vercel + Neon Postgres): https://waypoint-tech-triathlon.vercel.app
 - [ ] Record the 5-8 minute unlisted demo video and add the link.
-- [ ] Complete the bracketed parts of `docs/AI-DISCLOSURE.md`.
 - [ ] Submit repository link, URL, credentials and video before Sunday 4 October 2026, 23:59 Sri Lanka time.
