@@ -6,6 +6,7 @@ import {
   BarChart3,
   Bell,
   Box,
+  ChevronLeft,
   ChevronRight,
   LayoutDashboard,
   LogOut,
@@ -70,6 +71,7 @@ export function WaypointApp({ user }: { user: User }) {
   const [sidebar, setSidebar] = useState(false);
   const [inbox, setInbox] = useState(false);
   const [seen, setSeen] = useState(0);
+  const [collapsed, setCollapsed] = useState(false);
   const me = useApi<Me>("/api/me", 30000);
   const events = useApi<{ events: AppEvent[] }>("/api/events", 10000);
 
@@ -80,6 +82,7 @@ export function WaypointApp({ user }: { user: User }) {
     if (DISPATCH_PAGES.includes(fromHash)) setPage(fromHash);
     try {
       setSeen(Number(localStorage.getItem(`waypoint-seen-${user.id}`) ?? 0));
+      setCollapsed(localStorage.getItem("waypoint-sidebar-collapsed") === "1");
     } catch {}
   }, [user.id]);
 
@@ -105,6 +108,13 @@ export function WaypointApp({ user }: { user: User }) {
     navigator.serviceWorker?.controller?.postMessage("clear");
     window.location.href = "/login";
   };
+  const toggleSidebar = () => {
+    const next = !collapsed;
+    setCollapsed(next);
+    try {
+      localStorage.setItem("waypoint-sidebar-collapsed", next ? "1" : "0");
+    } catch {}
+  };
   const clock = me.data?.clock;
   const runDate = me.data?.run_date;
   const heading = user.role === "dispatcher" ? page : ROLE_PAGE[user.role][0];
@@ -112,7 +122,9 @@ export function WaypointApp({ user }: { user: User }) {
   return (
     <ToastProvider>
       <ServiceWorker />
-      <div className="app-shell min-h-screen antialiased">
+      <div
+        className={`app-shell min-h-screen antialiased ${collapsed ? "sidebar-collapsed" : ""}`}
+      >
         <a className="skip-link" href="#main-content">
           Skip to main content
         </a>
@@ -129,6 +141,19 @@ export function WaypointApp({ user }: { user: User }) {
             </span>
             waypoint<span className="wordmark-dot">®</span>
           </a>
+          <button
+            className="sidebar-toggle"
+            onClick={toggleSidebar}
+            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-expanded={!collapsed}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {collapsed ? (
+              <ChevronRight size={15} />
+            ) : (
+              <ChevronLeft size={15} />
+            )}
+          </button>
           <div className="workspace">
             <span className="workspace-icon">
               <Box size={19} />
@@ -156,6 +181,7 @@ export function WaypointApp({ user }: { user: User }) {
                     className={`nav-item ${page === p ? "active" : ""}`}
                     onClick={() => go(p)}
                     aria-current={page === p ? "page" : undefined}
+                    title={collapsed ? p : undefined}
                   >
                     <Icon size={18} />
                     <span>{p}</span>
@@ -196,9 +222,6 @@ export function WaypointApp({ user }: { user: User }) {
                 </span>
               )}
             </div>
-            <button className="help-link" onClick={signOut}>
-              <LogOut size={17} /> Sign out
-            </button>
             <div className="profile" aria-label="Signed-in user">
               <span className="avatar">{initials(user.display_name)}</span>
               <span>
@@ -208,6 +231,14 @@ export function WaypointApp({ user }: { user: User }) {
                   {user.vehicle_id ? ` · ${user.vehicle_id}` : ""}
                 </small>
               </span>
+              <button
+                className="sign-out"
+                onClick={signOut}
+                aria-label="Sign out"
+                title="Sign out"
+              >
+                <LogOut size={16} />
+              </button>
             </div>
           </div>
         </aside>
