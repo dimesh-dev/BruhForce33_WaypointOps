@@ -1,0 +1,26 @@
+services:
+  waypoint-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: waypoint_delivery_system
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+    volumes:
+      - waypoint_data:/app/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/auth || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  waypoint_data:
+    driver: local
