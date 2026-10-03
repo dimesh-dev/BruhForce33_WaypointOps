@@ -9,7 +9,7 @@ Tech-Triathlon 2026 · **Hackathon build**. One system that connects ordering, p
 
 Stack: Next.js 16 (App Router, route handlers), React 19, TypeScript, PostgreSQL 16, Tailwind 4 + the Designathon stylesheet, Playwright. No external services or API keys.
 
-> **Deployed URL:** `[add after deployment]` · **Demo video:** `[add YouTube link]`
+> **Deployed URL:** https://waypoint-tech-triathlon.vercel.app (accounts below, password `waypoint2026`) · **Demo video:** `[add YouTube link]`
 
 ## Quick start
 
@@ -104,8 +104,8 @@ src/lib/client/           API hook, formatting, IndexedDB outbox, shared UI
 src/server/               schema, seed, auth, planning, operations, sync, views, forecast
 public/sw.js              service worker (offline app shell and last-known data)
 data/                     shared dataset CSVs
-docs/                     architecture, data model, AI disclosure, Designathon design book
-scripts/                  db-setup.ts, plan-preview.ts, generate-sample-data.mjs; designathon/ tooling
+docs/                     architecture, data model, AI disclosure, diagrams/ (PNG exports), designathon/ (Day 5 rationale)
+scripts/                  db-setup.ts, plan-preview.ts, generate-sample-data.mjs
 tests/                    engine.spec.ts, e2e.spec.ts
 ```
 
@@ -118,7 +118,7 @@ See `.env.example`. Key variables: `DATABASE_URL`, `SESSION_SECRET` (required in
 - [Architecture](docs/ARCHITECTURE.md): component and sequence diagrams, planning engine, offline sync and recovery, security.
 - [Data model](docs/DATA-MODEL.md): entity-relationship diagram and how records connect.
 - [AI tool disclosure](docs/AI-DISCLOSURE.md).
-- [Designathon design book](docs/DESIGNATHON.md) and `docs/Waypoint_Designathon.pdf`: the Day 5 specification this build follows.
+- [Designathon design rationale](docs/designathon/DESIGNATHON.md): the Day 5 specification this build follows (personas, flows, failure scenarios, visual system).
 
 ## Departures from the Designathon submission
 
@@ -142,7 +142,7 @@ The build keeps the Day 5 flows, screens, copy and visual system (palette, Fraun
 
 - [ ] Replace `data/*.csv` with the official shared datasets and re-run the walkthrough.
 - [ ] Rename the repository to `TeamName_SolutionName` (GitHub monorepo).
-- [ ] Deploy (any Docker host with PostgreSQL), set `SESSION_SECRET`, `COOKIE_SECURE=true`, and add the URL above.
+- [x] Deploy (Vercel + Neon Postgres): https://waypoint-tech-triathlon.vercel.app
 - [ ] Record the 5-8 minute unlisted demo video and add the link.
 - [ ] Complete the bracketed parts of `docs/AI-DISCLOSURE.md`.
 - [ ] Submit repository link, URL, credentials and video before Sunday 4 October 2026, 23:59 Sri Lanka time.

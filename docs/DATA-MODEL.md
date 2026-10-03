@@ -2,6 +2,8 @@
 
 PostgreSQL 16. The schema lives in `src/server/schema.ts` and is applied idempotently on every start. Reference tables keep the shared dataset column names so the official CSVs load without mapping.
 
+Image export: [diagrams/data-model.png](diagrams/data-model.png)
+
 ```mermaid
 erDiagram
   district_travel ||--o{ outlets : "district"
@@ -190,6 +192,10 @@ erDiagram
     text outlet_id "store scope"
     text vehicle_id "driver scope"
   }
+  app_meta {
+    text key PK "schema_version, seeded_at, run_date, clock anchors"
+    text value
+  }
   demand_history {
     date date PK
     text depot PK
@@ -207,4 +213,5 @@ erDiagram
 - **Fuel quotas are weekly.** Remaining quota = `weekly_fuel_quota_l` − litres in `fuel_ledger` for the ISO week (earlier runs) − fuel of published trips on other days that week.
 - **Evidence is append-only.** `proofs` are never updated or deleted by sync; conflicting records are added with `superseded = true` and an `issues` row of kind `sync_conflict`.
 - **Notifications are scoped rows.** `events.audience` lists the roles; store, driver and loader events are further filtered by outlet, vehicle and depot in the query.
+- **Settings.** `app_meta` holds the schema version, when the data was seeded, the walkthrough run date and the scenario-clock anchor.
 - **Reference data = shared datasets.** `outlets`, `vehicles`, `calendar`, `district_travel` and `service_allowance` are loaded from `data/*.csv` with the booklet's column names. `demand_history` is aggregated from `deliveries_train.csv` when present.

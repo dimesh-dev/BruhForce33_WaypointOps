@@ -1,8 +1,10 @@
 # Architecture
 
-Waypoint is one Next.js 16 application backed by PostgreSQL 16. The same deployable unit serves the role screens (React, client-rendered after a server-side session check) and a JSON API (route handlers). A pure TypeScript planning engine sits between the API and the database. `docker compose up` runs two containers: `db` and `app`.
+Waypoint is one Next.js 16 application backed by PostgreSQL 16. The same deployable unit serves the role screens (React, client-rendered after a server-side session check) and a JSON API (route handlers). A pure TypeScript planning engine sits between the API and the database. Locally, `docker compose up` runs two containers, `db` and `app`; the public deployment runs the same code on Vercel with a Neon PostgreSQL database.
 
 ## Component diagram
+
+Image export: [diagrams/architecture-components.png](diagrams/architecture-components.png)
 
 ```mermaid
 flowchart LR
@@ -19,7 +21,7 @@ flowchart LR
     IDB[("IndexedDB outbox<br/>+ route snapshot<br/>src/lib/client/outbox.ts")]
   end
 
-  subgraph App["app container (Next.js standalone server)"]
+  subgraph App["Next.js server (app container or Vercel functions)"]
     API["Route handlers /api/*<br/>auth, role checks, validation<br/>src/app/api"]
     SVC["Domain services<br/>planning · operations · sync · orders · views · forecast<br/>src/server"]
     ENG["Planning engine (pure)<br/>solve() · validate() · scheduleVehicle()<br/>src/lib/planning/engine.ts"]
@@ -27,7 +29,7 @@ flowchart LR
   end
 
   CSV[["Shared datasets<br/>data/*.csv"]]
-  DB[("PostgreSQL 16<br/>db container")]
+  DB[("PostgreSQL 16<br/>db container or Neon")]
 
   D & L & R & S --> UI
   UI <--> SW
@@ -40,6 +42,8 @@ flowchart LR
 ```
 
 ## Request flow for one order
+
+Image export: [diagrams/order-sequence.png](diagrams/order-sequence.png)
 
 ```mermaid
 sequenceDiagram
@@ -69,7 +73,7 @@ sequenceDiagram
   LD->>API: mark ready
   DR->>DR: depart, deliver with photo + signature → IndexedDB outbox
   DR->>API: POST /api/sync (batch, client_event_id per event)
-  API->>DB: apply idempotently; conflicts kept as extra proofs + issue
+  API->>DB: apply idempotently, keep conflicts as extra proofs + issue
   SM->>API: confirm receipt or report short/damaged
 ```
 
@@ -132,4 +136,7 @@ The "Work offline" control on the driver screen simulates a coverage gap for dem
 
 ## Deployment
 
-The `Dockerfile` builds the Next.js standalone server, then the runtime image runs `node scripts/db-setup.ts` (schema + first-time seed, retrying until the database is ready) before `node server.js`. Any container host with PostgreSQL works (Render, Railway, Fly.io, a VM with Docker Compose); set the variables from `.env.example`.
+- **Docker Compose (local or any container host).** The `Dockerfile` builds the Next.js standalone server; the runtime image runs `node scripts/db-setup.ts` (schema + first-time seed, retrying until the database is ready) before `node server.js`.
+- **Vercel (public URL).** The app runs as Vercel functions against a Neon PostgreSQL database connected through the Vercel integration (`DATABASE_URL`). Vercel does not run the container start command, so the database is seeded once with `npm run db:setup`; the dispatcher's Reset demo reseeds it from the app (the reset route ships `data/*.csv` via `outputFileTracingIncludes`).
+
+Either way, set the variables from `.env.example`; `SESSION_SECRET` and `COOKIE_SECURE=true` are required for a public deployment.

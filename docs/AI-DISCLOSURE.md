@@ -8,7 +8,7 @@
 | --- | --- |
 | Claude Code (Anthropic, Claude Opus 5.5) | Gap analysis of the Designathon prototype against the Hackathon brief; design and implementation of the backend, database schema, planning engine, offline sync, role screens, tests, Docker setup and documentation in this repository. |
 | Google Antigravity / Gemini (per the earlier team disclosure) | An earlier backend iteration on `main` (JSON-file store, email-only sign-in, API routes, first allocation engine, IndexedDB helpers). Reviewed and superseded by this build; see below. |
-| Codex (OpenAI) | Designathon phase only: the original clickable prototype, design book and illustrations (see `docs/DESIGNATHON.md`). |
+| Codex (OpenAI) | Designathon phase only: the original clickable prototype, design book and illustrations (see `docs/designathon/DESIGNATHON.md`). |
 | Built-in image generation | Designathon phase only: the pencil and watercolour illustrations reused in the app. |
 
 ## AI-assisted work
