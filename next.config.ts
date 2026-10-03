@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   // Self-contained server bundle for the Docker image.
   output: "standalone",
+  // The seed reads data/*.csv at runtime; ship them with the reset route (needed on Vercel).
+  outputFileTracingIncludes: {
+    "/api/admin/reset": ["./data/**/*.csv"],
+  },
   async headers() {
     return [
       {
