@@ -2673,6 +2673,56 @@
   ],
   "orders": [
     {
+      "order_ref": "WP-2106",
+      "order_date": "2026-09-28",
+      "brand": "Fresh",
+      "outlet_id": "OUT001",
+      "outlet_name": "Waypoint Fresh · Colombo #1",
+      "district": "Colombo",
+      "depot": "Peliyagoda",
+      "temp_requirement": "chilled",
+      "order_units": 32,
+      "order_weight_kg": 480,
+      "order_volume_m3": 3.6,
+      "cutoff_status": "after_cutoff",
+      "dispatch_status": "deferred",
+      "window_open_time": "05:30",
+      "window_close_time": "08:00",
+      "eta": "Following run (After 4 PM cutoff)",
+      "deferred_yesterday": 0,
+      "days_since_last_served": 1,
+      "deferral_reason": "Received after 4:00 PM cutoff; queued for following operating run.",
+      "receipt_confirmed": false,
+      "order_id": "ORD92332",
+      "created_at": "2026-10-03T04:46:51.549Z",
+      "updated_at": "2026-10-03T04:46:51.549Z"
+    },
+    {
+      "order_ref": "WP-2106",
+      "order_date": "2026-09-28",
+      "brand": "Fresh",
+      "outlet_id": "OUT001",
+      "outlet_name": "Waypoint Fresh · Colombo #1",
+      "district": "Colombo",
+      "depot": "Peliyagoda",
+      "temp_requirement": "chilled",
+      "order_units": 16,
+      "order_weight_kg": 240,
+      "order_volume_m3": 1.8,
+      "cutoff_status": "after_cutoff",
+      "dispatch_status": "deferred",
+      "window_open_time": "05:30",
+      "window_close_time": "08:00",
+      "eta": "Following run (After 4 PM cutoff)",
+      "deferred_yesterday": 0,
+      "days_since_last_served": 1,
+      "deferral_reason": "Received after 4:00 PM cutoff; queued for following operating run.",
+      "receipt_confirmed": false,
+      "order_id": "ORD92331",
+      "created_at": "2026-10-03T04:42:41.055Z",
+      "updated_at": "2026-10-03T04:42:41.055Z"
+    },
+    {
       "order_id": "ORD0092301",
       "order_ref": "WP-2041",
       "order_date": "2026-09-28",
@@ -2687,7 +2737,7 @@
       "order_weight_kg": 640,
       "order_volume_m3": 4.2,
       "cutoff_status": "on_time",
-      "dispatch_status": "in_transit",
+      "dispatch_status": "delivered",
       "vehicle_id": "VEH001",
       "trip_id": 1,
       "seq_in_route": 0,
@@ -2698,9 +2748,11 @@
       "eta": "06:42",
       "deferred_yesterday": 0,
       "days_since_last_served": 1,
-      "receipt_confirmed": false,
+      "receipt_confirmed": true,
       "created_at": "2026-09-27T14:30:00Z",
-      "updated_at": "2026-09-28T05:30:00Z"
+      "updated_at": "2026-10-03T04:59:59.514Z",
+      "receipt_notes": "Received by Anjali Fernando. 24 of 24 crates. All 24 chilled crates received in good condition at rear dock.",
+      "reported_discrepancy": "Loading shortfall: damaged - WP-2041: two damaged crates, replacements needed."
     },
     {
       "order_id": "ORD0092302",
@@ -3551,8 +3603,48 @@
     }
   ],
   "trips": [],
-  "loadingLogs": [],
-  "podRecords": [],
+  "loadingLogs": [
+    {
+      "order_id": "WP-2041",
+      "vehicle_id": "VEH001",
+      "trip_id": 1,
+      "loader_id": "USR-002",
+      "loader_name": "Ruwan Kumara",
+      "status": "loaded",
+      "shortfall_type": "damaged",
+      "shortfall_notes": "WP-2041: two damaged crates, replacements needed.",
+      "id": "LOAD-1791002562320-358",
+      "timestamp": "2026-10-03T04:42:42.320Z"
+    }
+  ],
+  "podRecords": [
+    {
+      "order_id": "WP-2041",
+      "driver_id": "USR-003",
+      "driver_name": "Kasun Perera",
+      "recipient_name": "Receiving Staff",
+      "items_received": 30,
+      "condition_confirmed": true,
+      "proof_notes": "Received by Anjali Fernando. 24 of 24 crates. 24 sealed crates handed over at rear dock.",
+      "offline_queued": true,
+      "synced_at": "2026-10-03T04:42:39.239Z",
+      "id": "POD-1791002559239",
+      "delivered_at": "2026-10-03T04:42:39.239Z"
+    },
+    {
+      "order_id": "WP-2041",
+      "driver_id": "USR-003",
+      "driver_name": "Kasun Perera",
+      "recipient_name": "Receiving Staff",
+      "items_received": 30,
+      "condition_confirmed": true,
+      "proof_notes": "Received by Anjali Fernando. 24 of 24 crates. All 24 chilled crates received in good condition at rear dock.",
+      "offline_queued": true,
+      "synced_at": "2026-10-03T04:59:59.514Z",
+      "id": "POD-1791003599514",
+      "delivered_at": "2026-10-03T04:59:59.514Z"
+    }
+  ],
   "deferralLogs": [],
   "cutoffConfig": {
     "operating_date": "2026-09-28",
@@ -3562,5 +3654,5 @@
     "published_at": "2026-09-28T04:45:00Z",
     "published_by": "Amaya Jayasinghe"
   },
-  "lastUpdated": "2026-10-03T04:37:38.580Z"
+  "lastUpdated": "2026-10-03T04:59:59.515Z"
 }
