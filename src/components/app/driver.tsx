@@ -39,6 +39,7 @@ import {
   type OutboxKind,
 } from "@/lib/client/outbox";
 import type { Me, Stop, Trip } from "@/lib/client/types";
+import { NumberField, PhotoPicker, Select } from "@/lib/client/controls";
 import { Badge, Dialog, Empty, useToast } from "@/lib/client/ui";
 
 interface DriverData {
@@ -798,17 +799,14 @@ function DeliveryDialog({
             placeholder="Name of the person receiving"
           />
         </label>
-        <label className="field">
-          Units handed over ({stop.units} ordered)
-          <input
-            required
-            type="number"
-            min={0}
-            max={stop.units * 2}
-            value={units}
-            onChange={(e) => setUnits(Number(e.target.value))}
-          />
-        </label>
+        <NumberField
+          label={`Units handed over (${stop.units} ordered)`}
+          value={units}
+          onChange={setUnits}
+          min={0}
+          max={stop.units * 2}
+          required
+        />
         {units < stop.units && (
           <p className="skip-flag">
             Recorded as a partial delivery of {stop.units - units} units short.
@@ -822,28 +820,16 @@ function DeliveryDialog({
             placeholder="Where it was left, condition, temperature…"
           />
         </label>
-        <label className="field photo-field">
-          <span>
-            <Camera size={14} /> Photo of the delivered goods (optional)
-          </span>
-          <input
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onChange={async (e) =>
-              e.target.files?.[0] &&
-              setPhoto(await compressPhoto(e.target.files[0]))
-            }
-          />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          {photo && (
-            <img
-              src={photo}
-              alt="Delivery photo preview"
-              className="proof-photo"
-            />
-          )}
-        </label>
+        <PhotoPicker
+          label={
+            <>
+              <Camera size={14} /> Photo of the delivered goods (optional)
+            </>
+          }
+          value={photo}
+          onFile={async (f) => setPhoto(await compressPhoto(f))}
+          onClear={() => setPhoto(null)}
+        />
         <div className="field">
           <span>
             <PenLine size={14} /> Receiver signature (optional)
@@ -881,20 +867,18 @@ function FailDialog({
           onSave({ reason, note });
         }}
       >
-        <label className="field">
-          Reason
-          <select value={reason} onChange={(e) => setReason(e.target.value)}>
-            {[
-              "Outlet closed",
-              "Arrived after window closed",
-              "Access blocked",
-              "Refused by store",
-              "Goods damaged in transit",
-            ].map((x) => (
-              <option key={x}>{x}</option>
-            ))}
-          </select>
-        </label>
+        <Select
+          label="Reason"
+          value={reason}
+          onChange={setReason}
+          options={[
+            "Outlet closed",
+            "Arrived after window closed",
+            "Access blocked",
+            "Refused by store",
+            "Goods damaged in transit",
+          ]}
+        />
         <label className="field">
           Details
           <textarea
@@ -929,23 +913,18 @@ function IssueDialog({
           onSave({ category, description });
         }}
       >
-        <label className="field">
-          Issue type
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            {[
-              "Running late",
-              "Road closed / flooding",
-              "Vehicle problem",
-              "Quantity discrepancy",
-              "Temperature concern",
-            ].map((x) => (
-              <option key={x}>{x}</option>
-            ))}
-          </select>
-        </label>
+        <Select
+          label="Issue type"
+          value={category}
+          onChange={setCategory}
+          options={[
+            "Running late",
+            "Road closed / flooding",
+            "Vehicle problem",
+            "Quantity discrepancy",
+            "Temperature concern",
+          ]}
+        />
         <label className="field">
           What happened?
           <textarea

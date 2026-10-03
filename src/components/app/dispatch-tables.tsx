@@ -21,6 +21,7 @@ import {
   ORDER_STATUS,
   shortDate,
 } from "@/lib/client/format";
+import { Select } from "@/lib/client/controls";
 import { Badge, Empty, Meter, useToast } from "@/lib/client/ui";
 import type { DispatchProps } from "./dispatcher";
 
@@ -110,27 +111,26 @@ export function OrdersPage({ board }: DispatchProps) {
               onChange={(e) => setQ(e.target.value)}
             />
           </label>
-          <select
-            aria-label="Filter by brand"
+          <Select
+            compact
+            ariaLabel="Filter by brand"
             value={brand}
-            onChange={(e) => setBrand(e.target.value)}
-          >
-            {["All brands", "Fresh", "Style", "Tech"].map((x) => (
-              <option key={x}>{x}</option>
-            ))}
-          </select>
-          <select
-            aria-label="Filter by status"
+            onChange={setBrand}
+            options={["All brands", "Fresh", "Style", "Tech"]}
+          />
+          <Select
+            compact
+            ariaLabel="Filter by status"
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
-          >
-            <option>All statuses</option>
-            {Object.entries(ORDER_STATUS).map(([k, v]) => (
-              <option key={k} value={k}>
-                {v.label}
-              </option>
-            ))}
-          </select>
+            onChange={setStatus}
+            options={[
+              { value: "All statuses", label: "All statuses" },
+              ...Object.entries(ORDER_STATUS).map(([k, v]) => ({
+                value: k,
+                label: v.label,
+              })),
+            ]}
+          />
         </div>
       </div>
       <div className="table-scroll">
@@ -292,15 +292,13 @@ export function FleetPage({ board, reload }: DispatchProps) {
           <b>{all.filter((v) => v.status === "in_workshop").length}</b> in
           workshop
         </span>
-        <select
-          aria-label="Filter by depot"
+        <Select
+          compact
+          ariaLabel="Filter by depot"
           value={depot}
-          onChange={(e) => setDepot(e.target.value)}
-        >
-          {["All depots", "Peliyagoda", "Kandy"].map((x) => (
-            <option key={x}>{x}</option>
-          ))}
-        </select>
+          onChange={setDepot}
+          options={["All depots", "Peliyagoda", "Kandy"]}
+        />
       </div>
       <section className="panel">
         <div className="table-scroll">

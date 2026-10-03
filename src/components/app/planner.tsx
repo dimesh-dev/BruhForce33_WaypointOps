@@ -1,4 +1,5 @@
 "use client";
+import { Select } from "@/lib/client/controls";
 import { useMemo, useState } from "react";
 import {
   ArrowRight,
@@ -351,17 +352,20 @@ export function Planner({ board, reload }: DispatchProps) {
                   booklet formula: outbound + inter-stop + handling.
                 </p>
               </div>
-              <select
-                aria-label="Filter trips"
+              <Select
+                compact
+                ariaLabel="Filter trips"
                 value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-              >
-                {["All", "Fresh", "Style", "Tech", "Peliyagoda", "Kandy"].map(
-                  (x) => (
-                    <option key={x}>{x}</option>
-                  ),
-                )}
-              </select>
+                onChange={setFilter}
+                options={[
+                  { value: "All", label: "All trips" },
+                  { value: "Fresh", label: "Fresh" },
+                  { value: "Style", label: "Style" },
+                  { value: "Tech", label: "Tech" },
+                  { value: "Peliyagoda", label: "Peliyagoda depot" },
+                  { value: "Kandy", label: "Kandy depot" },
+                ]}
+              />
             </div>
             <div className="vehicle-grid">
               {shown.map(([vehicleId, trips]) => {
@@ -661,32 +665,31 @@ function EditDialog({
         </button>
       </div>
       {mode === "assign" ? (
-        <label className="field">
-          Vehicle ({compatible} compatible at {order.depot}; others will be
-          rejected)
-          <select value={vehicle} onChange={(e) => setVehicle(e.target.value)}>
-            <option value="">Choose a vehicle…</option>
-            {candidates.map((v) => {
-              const trips = board.trips.filter(
-                (t) => t.vehicle_id === v.vehicle_id,
-              );
-              return (
-                <option key={v.vehicle_id} value={v.vehicle_id}>
-                  {v.vehicle_id} · {v.type}/{v.temp} ·{" "}
-                  {trips.length
-                    ? trips
-                        .map(
-                          (t) =>
-                            `T${t.trip_no} ${t.brand} ${t.district} ${Math.round((t.volume_m3 / t.volume_cap_m3) * 100)}%`,
-                        )
-                        .join(", ")
-                    : "idle"}
-                  {mismatch(v).length ? ` · ⚠ ${mismatch(v).join(", ")}` : ""}
-                </option>
-              );
-            })}
-          </select>
-        </label>
+        <Select
+          label={`Vehicle (${compatible} compatible at ${order.depot}; others will be rejected)`}
+          placeholder="Choose a vehicle…"
+          value={vehicle}
+          onChange={setVehicle}
+          options={candidates.map((v) => {
+            const trips = board.trips.filter(
+              (t) => t.vehicle_id === v.vehicle_id,
+            );
+            const issues = mismatch(v);
+            return {
+              value: v.vehicle_id,
+              label: `${v.vehicle_id} · ${v.type} · ${v.temp}`,
+              hint: trips.length
+                ? trips
+                    .map(
+                      (t) =>
+                        `Trip ${t.trip_no}: ${t.brand} ${t.district}, ${Math.round((t.volume_m3 / t.volume_cap_m3) * 100)}% full`,
+                    )
+                    .join(" · ")
+                : "Idle today",
+              warning: issues.length ? issues.join(", ") : undefined,
+            };
+          })}
+        />
       ) : (
         <label className="field">
           Reason the store will see

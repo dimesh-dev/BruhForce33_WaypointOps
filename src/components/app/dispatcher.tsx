@@ -3,7 +3,6 @@ import Image from "next/image";
 import {
   AlertTriangle,
   ArrowRight,
-  CalendarDays,
   CheckCircle2,
   Clock3,
   Package,
@@ -21,6 +20,7 @@ import {
   TRIP_STATUS,
 } from "@/lib/client/format";
 import type { Board, Me } from "@/lib/client/types";
+import { DatePicker } from "@/lib/client/controls";
 import { Badge, Dialog, Empty, useToast } from "@/lib/client/ui";
 import { Planner } from "./planner";
 import { OrdersPage, FleetPage, OutletsPage } from "./dispatch-tables";
@@ -93,16 +93,17 @@ export function DispatcherWorkspace({
           <p>{SUBTITLE[page]}</p>
         </div>
         <div className="heading-actions">
-          <label className="date-btn btn secondary">
-            <CalendarDays size={15} />
-            <span className="sr-only">Run date</span>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => e.target.value && setDate(e.target.value)}
-              aria-label="Run date"
-            />
-          </label>
+          <DatePicker
+            ariaLabel="Run date"
+            value={date}
+            onChange={setDate}
+            today={me.run_date}
+            note={(d) =>
+              new Date(`${d}T00:00:00Z`).getUTCDay() === 0
+                ? "No deliveries on Sundays"
+                : undefined
+            }
+          />
           <button
             className="btn secondary"
             onClick={() => setResetOpen(true)}

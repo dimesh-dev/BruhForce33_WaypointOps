@@ -182,14 +182,19 @@ export function WaypointApp({ user }: { user: User }) {
                 alt=""
                 className="sidebar-sketch"
               />
-              <span className="status-light" /> One network. In sync.
-              <p>
-                {runDate ? `Run: ${longDate(runDate)}` : "Loading run…"}
-                <br />
-                {clock
-                  ? `${clock.simulated ? "Scenario clock" : "Colombo"} ${colomboTime(clock.now)}`
-                  : ""}
-              </p>
+              <span className="network-card-head">
+                <span className="status-light" /> One network. In sync.
+              </span>
+              <span className="network-card-label">Current run</span>
+              <b className="network-card-date">
+                {runDate ? longDate(runDate) : "Loading…"}
+              </b>
+              {clock && (
+                <span className="network-card-clock">
+                  {clock.simulated ? "Scenario clock" : "Colombo time"}{" "}
+                  <b>{colomboTime(clock.now)}</b>
+                </span>
+              )}
             </div>
             <button className="help-link" onClick={signOut}>
               <LogOut size={17} /> Sign out

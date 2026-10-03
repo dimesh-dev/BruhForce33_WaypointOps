@@ -922,3 +922,487 @@ table.dense th {
     width: calc(100vw - 32px);
   }
 }
+
+/* ------------------------------------------------------- custom controls */
+/* Select trigger, date trigger: same field look as text inputs. */
+.wp-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid #dfe5ee;
+  border-radius: 7px;
+  background: #fbfcfe;
+  color: var(--ink);
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s,
+    background 0.15s;
+}
+.wp-select:hover {
+  border-color: #c9d3e2;
+  background: #fff;
+}
+.wp-select:focus-visible,
+.wp-select.open {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px #687fa626;
+  background: #fff;
+}
+.wp-select-value {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wp-select-value.placeholder {
+  color: #aeb8c8;
+}
+.wp-select .chev {
+  color: var(--muted);
+  flex: none;
+  transition: transform 0.15s;
+}
+.wp-select.open .chev {
+  transform: rotate(180deg);
+}
+.wp-select .warn-icon {
+  color: #a2752f;
+  flex: none;
+}
+.wp-select.compact {
+  width: auto;
+  min-width: 150px;
+  min-height: 36px;
+  font-size: 11.5px;
+  background: #fff;
+  border-radius: 8px;
+}
+.wp-date {
+  width: auto;
+  min-height: 40px;
+  background: #fff;
+  gap: 9px;
+}
+.wp-date > svg:first-child {
+  color: var(--accent);
+}
+.wp-field {
+  margin: 18px 0;
+}
+.wp-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: #8393ab;
+}
+
+/* Popover + listbox */
+.wp-popover {
+  position: fixed;
+  z-index: 300;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid #dfe5ee;
+  border-radius: 10px;
+  box-shadow:
+    0 16px 40px #233a5726,
+    0 2px 6px #233a5712;
+  padding: 5px;
+  animation: wp-pop 0.12s ease-out;
+  max-width: calc(100vw - 16px);
+}
+.wp-popover.above {
+  animation-name: wp-pop-up;
+}
+@keyframes wp-pop {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+@keyframes wp-pop-up {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+.wp-listbox {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  outline: none;
+}
+.wp-listbox li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  min-height: 38px;
+  border-radius: 7px;
+  font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.wp-listbox li.active {
+  background: #eef2f8;
+}
+.wp-listbox li.selected {
+  color: var(--accent-dark);
+  font-weight: 600;
+}
+.wp-listbox li.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.wp-listbox .opt-text {
+  flex: 1;
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.wp-listbox small {
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 10.5px;
+}
+.wp-listbox .opt-warning {
+  color: #9a6a25;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.wp-listbox .opt-check {
+  color: var(--accent);
+  flex: none;
+}
+
+/* Number stepper */
+.wp-stepper {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #dfe5ee;
+  border-radius: 7px;
+  background: #fbfcfe;
+  overflow: hidden;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+.wp-stepper:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px #687fa626;
+  background: #fff;
+}
+.wp-stepper > button {
+  width: 42px;
+  flex: none;
+  border: 0;
+  background: transparent;
+  color: var(--accent-dark);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.wp-stepper > button:hover:not(:disabled) {
+  background: #eef2f8;
+}
+.wp-stepper > button:disabled {
+  color: #c3cbd8;
+  cursor: not-allowed;
+}
+.wp-stepper > button:first-child {
+  border-right: 1px solid #e7ebf1;
+}
+.wp-stepper > button:last-child {
+  border-left: 1px solid #e7ebf1;
+}
+.wp-stepper-input {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+}
+.field .wp-stepper input {
+  border: 0;
+  background: transparent;
+  text-align: center;
+  padding: 11px 4px;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  box-shadow: none;
+  outline: none;
+}
+.wp-suffix {
+  color: var(--muted);
+  font-size: 11px;
+  padding-right: 8px;
+}
+
+/* Calendar */
+.wp-calendar {
+  width: 292px;
+  padding: 6px;
+  outline: none;
+}
+.wp-cal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.wp-cal-head b {
+  font-family: "Fraunces Variable", Georgia, serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #29384a;
+}
+.wp-cal-head .icon-btn {
+  width: 30px;
+  height: 30px;
+}
+.wp-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.wp-cal-dow {
+  text-align: center;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  padding: 4px 0 6px;
+}
+.wp-cal-day {
+  aspect-ratio: 1;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  color: var(--ink);
+  cursor: pointer;
+  position: relative;
+}
+.wp-cal-day:hover {
+  background: #eef2f8;
+}
+.wp-cal-day:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+.wp-cal-day.outside {
+  color: #b8c1cf;
+}
+.wp-cal-day.muted-day {
+  color: #b8c1cf;
+}
+.wp-cal-day.today::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 5px;
+  width: 4px;
+  height: 4px;
+  margin-left: -2px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.wp-cal-day.selected {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.wp-cal-day.selected::after {
+  background: #fff;
+}
+.wp-cal-today {
+  display: block;
+  margin: 8px auto 2px;
+}
+
+/* Photo picker */
+.wp-dropzone {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 18px 12px;
+  border: 1.5px dashed #c9d3e2;
+  border-radius: 10px;
+  background: #fbfcfe;
+  color: var(--ink);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
+}
+.wp-dropzone:hover,
+.wp-dropzone:focus-visible {
+  border-color: var(--accent);
+  background: #f3f6fb;
+  outline: none;
+}
+.wp-dropzone svg {
+  color: var(--accent);
+}
+.wp-dropzone b {
+  font-size: 12px;
+}
+.wp-dropzone small {
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 400;
+}
+.wp-photo {
+  display: grid;
+  gap: 8px;
+}
+.wp-photo img {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+}
+.wp-photo-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Disclosure rows (stop lists, receipt history) */
+details > summary {
+  list-style: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details > summary::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-right: 1.6px solid currentColor;
+  border-bottom: 1.6px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.15s;
+  margin-right: 2px;
+}
+details[open] > summary::before {
+  transform: rotate(45deg) translate(-1px, -1px);
+}
+
+@media (max-width: 760px) {
+  .wp-select.compact {
+    min-width: 0;
+    flex: 1;
+  }
+  .wp-listbox li {
+    min-height: 44px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wp-popover {
+    animation: none;
+  }
+}
+.field-row {
+  gap: 14px;
+  margin: 18px 0;
+  align-items: end;
+}
+.field-row > .wp-field {
+  margin: 0;
+}
+
+/* Sidebar network card: the sketch is inverted so only its pencil lines show,
+   as light strokes on the navy, fading in from the right. */
+.network-card {
+  display: grid;
+  gap: 4px;
+  padding: 16px 14px 18px;
+  min-height: 0;
+}
+.network-card > span,
+.network-card > b {
+  position: relative;
+  z-index: 1;
+}
+.sidebar-sketch {
+  inset: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 70% 40%;
+  filter: invert(1) grayscale(1) contrast(1.4);
+  mix-blend-mode: screen;
+  opacity: 0.16;
+  -webkit-mask-image: linear-gradient(100deg, transparent 25%, #000 85%);
+  mask-image: linear-gradient(100deg, transparent 25%, #000 85%);
+}
+.network-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  color: #c9d4e2;
+  margin-bottom: 10px;
+}
+.network-card-head .status-light {
+  box-shadow: 0 0 0 3px #97b39333;
+}
+.network-card-label {
+  font-size: 8.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #7f90a7;
+}
+.network-card-date {
+  font-family: "Fraunces Variable", Georgia, serif;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.25;
+  color: #e6ecf4;
+}
+.network-card-clock {
+  margin-top: 8px;
+  font-size: 10.5px;
+  color: #8fa0b6;
+}
+.network-card-clock b {
+  color: #d8e0eb;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  margin-left: 2px;
+}
+/* Filters in stat strips and panel headers sit at the right edge. */
+.page-stat-strip > .wp-select,
+.panel-header > .wp-select {
+  margin-left: auto;
+}
+@media (max-width: 760px) {
+  .page-stat-strip > .wp-select {
+    margin-left: 0;
+    flex: 1 1 100%;
+    width: 100%;
+  }
+}
