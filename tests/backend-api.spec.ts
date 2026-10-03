@@ -1,6 +1,10 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Waypoint Backend, Database & API Endpoints", () => {
+  test.beforeEach(async ({ request }) => {
+    await request.post("/api/seed");
+  });
+
   test("Auth API: Seeds and authenticates 4 official role accounts", async ({ request }) => {
     const listRes = await request.get("/api/auth");
     expect(listRes.ok()).toBe(true);
