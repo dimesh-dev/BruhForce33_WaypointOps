@@ -317,18 +317,32 @@ class DatabaseClient {
     return newPod;
   }
 
-  syncPodQueue(queuedPods: Array<Omit<DbPodRecord, "id"> & { id?: string }>): DbPodRecord[] {
+  syncPodQueue(
+    queuedPods: Array<{
+      order_id: string;
+      driver_id?: string;
+      driver_name?: string;
+      recipient_name?: string;
+      recipient_phone?: string;
+      items_received?: number;
+      condition_confirmed?: boolean;
+      proof_notes?: string;
+      signature_svg_or_hash?: string;
+      photo_url?: string;
+      delivered_at?: string;
+    }>
+  ): DbPodRecord[] {
     const results: DbPodRecord[] = [];
     for (const q of queuedPods) {
       const saved = this.createPodRecord({
         order_id: q.order_id,
-        driver_id: q.driver_id,
-        driver_name: q.driver_name,
-        recipient_name: q.recipient_name,
+        driver_id: q.driver_id || "USR-003",
+        driver_name: q.driver_name || "Kasun Perera",
+        recipient_name: q.recipient_name || "Receiving Staff",
         recipient_phone: q.recipient_phone,
-        items_received: q.items_received,
-        condition_confirmed: q.condition_confirmed,
-        proof_notes: q.proof_notes,
+        items_received: q.items_received ?? 30,
+        condition_confirmed: q.condition_confirmed ?? true,
+        proof_notes: q.proof_notes || "Captured during offline mode.",
         signature_svg_or_hash: q.signature_svg_or_hash,
         photo_url: q.photo_url,
         offline_queued: true,

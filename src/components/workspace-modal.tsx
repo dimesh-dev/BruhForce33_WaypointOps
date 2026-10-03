@@ -674,6 +674,17 @@ export function Modal({
                   );
                 } else {
                   updateOrder(modalOrder.id, { status: "Delivered", proof });
+                  fetch("/api/driver", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      order_id: modalOrder.id,
+                      driver_name: "Kasun Perera",
+                      recipient_name: receiver,
+                      items_received: Number(count),
+                      proof_notes: note,
+                    }),
+                  }).catch(() => {});
                   addEvent(
                     "Delivery completed",
                     "Colombo 03 can now confirm receipt.",
@@ -749,6 +760,21 @@ export function Modal({
                       : "Store issue reported",
                   `${issueType}: ${note}`,
                 );
+
+                if (modal.type === "shortfall") {
+                  fetch("/api/loading", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      order_id: modalOrder.id,
+                      vehicle_id: "VEH001",
+                      trip_id: 1,
+                      shortfall_type: issueType === "Missing items" ? "missing" : "damaged",
+                      shortfall_notes: note,
+                    }),
+                  }).catch(() => {});
+                }
+
                 finish("Issue recorded in the dispatcher’s activity inbox.");
               }}
             >
@@ -818,6 +844,9 @@ export function Modal({
               onSubmit={(e) => {
                 e.preventDefault();
                 const id = "WP-" + (2100 + orders.length);
+                const weight = Number(count) * 20;
+                const volume = (Number(count) * 0.15).toFixed(1);
+
                 setOrders((o) => [
                   ...o,
                   {
@@ -825,8 +854,8 @@ export function Modal({
                     name: "Fresh · Colombo 03",
                     brand: "Fresh",
                     district: "Colombo",
-                    amount: `${Number(count) * 20} kg`,
-                    volume: `${(Number(count) * 0.15).toFixed(1)} m³`,
+                    amount: `${weight} kg`,
+                    volume: `${volume} m³`,
                     window: "06:00 - 07:30",
                     temp,
                     status: "Scheduled",
@@ -835,6 +864,23 @@ export function Modal({
                     access: "Rear dock",
                   },
                 ]);
+
+                fetch("/api/orders", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    order_ref: id,
+                    outlet_id: "OUT001",
+                    brand: "Fresh",
+                    district: "Colombo",
+                    depot: "Peliyagoda",
+                    order_weight_kg: weight,
+                    order_volume_m3: parseFloat(volume),
+                    temp_requirement: temp.toLowerCase(),
+                    force_after_cutoff: late,
+                  }),
+                }).catch(() => {});
+
                 addEvent(
                   "Store order confirmed",
                   `${id}: ${count} ${temp.toLowerCase()} crates for ${late ? "Wednesday" : "Tuesday"}.`,
@@ -903,6 +949,18 @@ export function Modal({
                   status: "Received",
                   receiptNote: note,
                 });
+
+                fetch("/api/orders", {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    order_id: modalOrder.id,
+                    dispatch_status: "received",
+                    receipt_confirmed: true,
+                    receipt_notes: note,
+                  }),
+                }).catch(() => {});
+
                 addEvent(
                   "Store receipt confirmed",
                   "Anjali confirmed the Colombo 03 delivery.",

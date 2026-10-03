@@ -96,6 +96,13 @@ export default function WaypointApp() {
     queued.forEach((q) =>
       updateOrder(q.id, { status: "Delivered", eta: "06:42", proof: q.proof }),
     );
+    if (queued.length > 0) {
+      fetch("/api/driver/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ queue: queued }),
+      }).catch(() => {});
+    }
     addEvent(
       "Offline records synchronized",
       `${queued.length} delivery record(s) now visible to the store.`,
