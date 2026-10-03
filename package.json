@@ -11,7 +11,6 @@
     "db:setup": "node --env-file-if-exists=.env.local scripts/db-setup.ts",
     "db:reset": "node --env-file-if-exists=.env.local scripts/db-setup.ts --reset",
     "plan:preview": "node --env-file-if-exists=.env.local scripts/plan-preview.ts",
-    "data:sample": "node scripts/generate-sample-data.mjs data",
     "test": "playwright test tests/engine.spec.ts",
     "test:e2e": "playwright test tests/e2e.spec.ts",
     "format": "prettier --write src tests scripts *.ts"

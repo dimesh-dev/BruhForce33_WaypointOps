@@ -1,4 +1,5 @@
 import { query } from "./db.ts";
+import { festivalName } from "../lib/festivals.ts";
 
 /**
  * Capacity outlook for future weeks.
@@ -115,7 +116,7 @@ export async function capacityForecast(fromDate: string, weeks = 8) {
     const notes = [
       ...new Set(
         days.flatMap((d) => [
-          ...(d.festival ? [d.festival] : []),
+          ...(d.festival ? [festivalName(d.festival)] : []),
           ...(Number(d.festival_ramp) > 0 && !d.festival
             ? ["Festival build-up"]
             : []),

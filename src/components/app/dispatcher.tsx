@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { api, ApiError, useApi } from "@/lib/client/api";
+import { festivalName } from "@/lib/festivals";
 import {
   colomboTime,
   hhmm,
@@ -210,7 +211,9 @@ function Overview({ board, go }: DispatchProps) {
           <span className="hero-eyebrow">
             <span className="status-light" />{" "}
             {board.run.dow_name?.toUpperCase()} RUN
-            {board.run.festival ? ` · ${board.run.festival.toUpperCase()}` : ""}
+            {board.run.festival
+              ? ` · ${festivalName(board.run.festival).toUpperCase()}`
+              : ""}
             {board.run.is_payday ? " · PAYDAY" : ""}
             {Number(board.run.festival_ramp) > 0 && !board.run.festival
               ? " · FESTIVAL BUILD-UP"

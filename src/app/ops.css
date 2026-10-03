@@ -1406,3 +1406,130 @@ details[open] > summary::before {
     width: 100%;
   }
 }
+
+/* ------------------------------------------------- sidebar collapse + profile */
+.sidebar {
+  transition:
+    width 0.2s ease,
+    padding 0.2s ease;
+}
+.main-shell {
+  transition: margin-left 0.2s ease;
+}
+/* Round handle sitting on the sidebar's right edge, same place expanded or collapsed. */
+.sidebar-toggle {
+  position: fixed;
+  top: 92px;
+  left: 213px; /* sidebar width 226 - half the handle */
+  z-index: 60;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #3a4658;
+  border-radius: 50%;
+  background: var(--sidebar);
+  color: #b4bdcd;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #0000002e;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+.sidebar-toggle:hover {
+  color: #fff;
+  background: #2f3b4d;
+}
+/* Profile row: avatar, name, then a sign-out icon button on the same line. */
+.profile > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sign-out {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #ffffff12;
+  border-radius: 8px;
+  background: transparent;
+  color: #95a3b7;
+  cursor: pointer;
+}
+.sign-out:hover {
+  color: #fff;
+  background: #ffffff12;
+  border-color: #ffffff22;
+}
+
+/* Collapsed: icon rail (desktop only; narrower screens already use a rail or drawer). */
+@media (min-width: 851px) {
+  .sidebar-collapsed .sidebar {
+    width: 76px;
+    padding: 31px 12px 0;
+  }
+  .sidebar-collapsed .main-shell {
+    margin-left: 76px;
+  }
+  .sidebar-collapsed .wordmark {
+    font-size: 0;
+    letter-spacing: 0;
+    gap: 0;
+    padding: 0 6px;
+  }
+  .sidebar-collapsed .brand-symbol {
+    font-size: 36px;
+  }
+  .sidebar-collapsed .wordmark-dot,
+  .sidebar-collapsed .workspace,
+  .sidebar-collapsed .nav-label,
+  .sidebar-collapsed .nav-item > span,
+  .sidebar-collapsed .network-card,
+  .sidebar-collapsed .profile > span:nth-child(2) {
+    display: none;
+  }
+  .sidebar-collapsed .sidebar nav {
+    margin-top: 40px;
+  }
+  .sidebar-collapsed .sidebar-toggle {
+    left: 63px;
+  }
+  .sidebar-collapsed .nav-item {
+    justify-content: center;
+    padding: 13px 0;
+  }
+  .sidebar-collapsed .profile {
+    width: 76px;
+    margin-left: -12px;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 0;
+  }
+  .sidebar-collapsed .toast {
+    left: calc(50% + 38px);
+  }
+}
+@media (max-width: 850px) {
+  .sidebar-toggle {
+    display: none;
+  }
+  .profile {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+@media (max-width: 700px) {
+  .sidebar.open .profile {
+    flex-direction: row;
+  }
+}
+.sidebar-toggle {
+  transition:
+    left 0.2s ease,
+    color 0.15s,
+    background 0.15s;
+}

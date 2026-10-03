@@ -48,22 +48,22 @@ All accounts use the password **`waypoint2026`** (`DEMO_PASSWORD`). The sign-in 
 | Dispatcher | `dispatcher` | Amaya Jayasinghe · all depots |
 | Loader | `loader` | Ruwan Kumara · Peliyagoda dock (`loader.kandy` for Kandy) |
 | Driver | `driver` | Kasun Perera · VEH001, first available Peliyagoda reefer truck |
-| Store manager | `store` | Anjali Fernando · an outlet on VEH001's first trip (OUT047 Fresh · Matara 01 with the bundled data) |
+| Store manager | `store` | Anjali Fernando · an outlet on VEH001's first trip (OUT043 · Fresh · Kalutara 04) |
 
 Every vehicle also has a driver login named after it (`veh002` … `veh060`) and every outlet a manager login (`out001` … `out120`), so any order can be followed end to end.
 
 ## Seeded scenario
 
-- **Run:** Tuesday 6 October 2026 (`DEMO_RUN_DATE`) from both depots. 143 orders from 90 outlets: Fresh dry and chilled, Style's weekly delivery, Tech as-needed.
-- **Scenario clock:** starts at Monday 5 October 14:30 Colombo time when the data is seeded, then runs in real time (`DEMO_START`; shown in the header). Orders placed before 16:00 join Tuesday's run; later ones, or orders after the dispatcher closes the queue, join Wednesday's.
-- **Capacity pressure:** three Peliyagoda reefer trucks (VEH007-009) and one dry truck are in the workshop, several vehicles have used 80-90% of their weekly fuel quota on Monday, and three outlets carry orders deferred on Monday. Refrigerated capacity binds: the engine serves about 96% and defers the rest with reasons.
+- **Run:** Tuesday 7 April 2026 (`DEMO_RUN_DATE`) from both depots, six days before Sinhala and Tamil New Year, so the calendar's festival build-up is lifting demand. 138 orders from 88 outlets: Fresh dry and chilled (55 chilled), Style's weekly delivery, Tech as-needed.
+- **Scenario clock:** starts at Monday 6 April 14:30 Colombo time when the data is seeded, then runs in real time (`DEMO_START`; shown in the header). Orders placed before 16:00 join Tuesday's run; later ones, or orders after the dispatcher closes the queue, join Wednesday's.
+- **Capacity pressure:** two Peliyagoda reefer trucks (VEH006, VEH007) and one dry truck (VEH034) are in the workshop, several vehicles have used 80-90% of their weekly fuel quota on Monday, and three outlets carry orders deferred on Monday. Refrigerated and van capacity bind: the engine serves about 89% and defers about 15 orders, each with a reason.
 
 ## Judge walkthrough
 
 Follow one order from the store to receipt. Use a desktop window for the dispatcher and a phone-sized window (or a phone) for the loader, driver and store. Exact counts may vary by one or two orders if you place extra orders.
 
 1. **Store manager places an order.** Sign in as `store`. The right panel shows the next run and its cutoff. Choose **Place a new order** → *Chilled & frozen* → **Place order**. The order number and its run date appear immediately (*Confirm before the cutoff*). The two seeded orders for this outlet show *Confirmed*.
-2. **Dispatcher reviews the queue.** Sign in as `dispatcher` (new window). **Overview** shows the run, reefers available (13/16), the run progress steps and the three outlets skipped on Monday. **Orders** lists every queued order, including the store's new one; filter, search or export CSV.
+2. **Dispatcher reviews the queue.** Sign in as `dispatcher` (new window). **Overview** shows the run, reefers available (14/16), the run progress steps and the three outlets skipped on Monday. **Orders** lists every queued order, including the store's new one; filter, search or export CSV.
 3. **Close orders and generate the plan.** **Dispatch planner** → **Close queue** → **Generate plan**. Review the summary (service rate, deferred count, trips, fuel), *What limited service on this run* (refrigerated capacity), the **Deferred orders** table (reason, unavoidable vs dispatcher choice, next run) and the **Vehicles & trips** cards (Fresh 270-minute budget, weight and volume against both limits, depart/return times, fuel; expand a trip to see stops sequenced by window with arrival times).
 4. **Try a change that breaks a rule.** On any chilled stop choose **Change** → pick a vehicle marked *⚠ not refrigerated* → **Validate & apply**. The change is rejected with `R2 … is chilled; … is not refrigerated`. Then defer an order with a reason, or use **Try to serve** on a deferred one; valid changes apply and the summary updates.
 5. **Publish.** **Publish v1**. Loaders, drivers and stores are notified (bell icon). The store's orders now show vehicle, stop number and expected arrival; deferred orders show the reason and next run.
@@ -71,9 +71,9 @@ Follow one order from the store to receipt. Use a desktop window for the dispatc
 7. **Dispatcher decides.** As dispatcher, **Issues** → **Decide** → note → **Release vehicle as loaded** (or **Remove order from trip & defer**, which moves it to Wednesday and tells the store).
 8. **Loader releases the vehicle.** Refresh, check each load, **Mark ready to depart**. The dispatcher overview shows the trip *Ready*.
 9. **Driver delivers, including offline.** Sign in as `driver` on a phone. **Start trip**. At the first stop tap **Work offline** (or turn on airplane mode), then **Record delivery & proof**: receiver, units, optional photo and signature → **Save proof on this phone**. The banner shows *1 record waiting to sync*; reload the page and the record and route are still there. **Reconnect & sync** (or restore the network): the record is sent and the dispatcher's live board updates.
-10. **Complete the stops.** Record the remaining stops online. The store's outlet is one of them (stop 3 with the bundled data). Try **Could not deliver** or **Report a delivery issue** on any stop to see them reach the dispatcher and store.
+10. **Complete the stops.** Record the remaining stops online. The store's outlet is one of them (stop 3 of VEH001's first trip, to Kalutara). Try **Could not deliver** or **Report a delivery issue** on any stop to see them reach the dispatcher and store.
 11. **Store confirms receipt.** As `store`, the delivered order shows the driver's record (units, receiver, photo/signature on record). **Confirm what arrived** → *Complete* (or *Short delivery*, which opens an issue for the dispatcher). The order moves to *Received*.
-12. **Plan future capacity.** As dispatcher, **Capacity** shows the next eight weeks of demand per brand, chilled volume, vehicle trips needed and peak-day reefer trips against the reefer fleet, with paydays and festival build-up (Deepavali, 8 November). **Fleet & drivers** shows each vehicle's weekly fuel use and lets you send a vehicle to or from the workshop before regenerating.
+12. **Plan future capacity.** As dispatcher, **Capacity** shows the next eight weeks of demand per brand, chilled volume, vehicle trips needed and peak-day reefer trips against the reefer fleet, with paydays and festival build-up (Sinhala and Tamil New Year, Vesak, Poson). **Fleet & drivers** shows each vehicle's weekly fuel use and lets you send a vehicle to or from the workshop before regenerating.
 
 **Offline conflict (optional):** sign in as `driver` in two browsers, take one offline, record a different quantity for the same stop in each, then sync. The second record does not overwrite the first; the dispatcher gets a *Sync conflict* issue showing both proofs.
 
@@ -81,7 +81,7 @@ Follow one order from the store to receipt. Use a desktop window for the dispatc
 
 ## Datasets
 
-`data/` holds the five shared reference files with the booklet's filenames and columns: `outlets.csv`, `vehicles.csv`, `calendar.csv`, `district_travel.csv`, `service_allowance.csv`. The official CSVs were not in the repository while this phase was built, so the files here are **schema-compatible stand-ins** generated by `npm run data:sample` (120 outlets: 80 Fresh, 25 Style, 15 Tech; 60 vehicles: 12 reefer trucks, 40 dry trucks, 8 vans of which 4 are refrigerated; two depots; 12 districts). To use the official data, copy the official files over them (add `deliveries_train.csv` to drive the capacity outlook from real history) and reset the database. Outlet names are derived from brand and district when the CSV has no name column. The seeded orders for the walkthrough day are generated from the outlets and calendar.
+`data/` holds the official shared reference files (General Data) with the booklet's filenames and columns: `outlets.csv` (120 outlets: 80 Fresh, 25 Style, 15 Tech), `vehicles.csv` (60 vehicles: 12 reefer trucks, 40 dry trucks, 8 vans of which 4 are refrigerated), `calendar.csv` (1 Jan 2024 – 28 Jun 2026), `district_travel.csv` (12 districts, two depots) and `service_allowance.csv`. The seed loads them as-is; the walkthrough day's orders are generated from these outlets and the calendar, so the scenario date must fall inside the calendar. Outlet names are derived from brand and district because the file has no name column. Adding `deliveries_train.csv` from the Training Data makes the capacity outlook use real order history. The shared datasets are confidential under the competition terms, so keep this repository private (share it with the judges) rather than public.
 
 ## Tests and checks
 
@@ -105,7 +105,7 @@ src/server/               schema, seed, auth, planning, operations, sync, views,
 public/sw.js              service worker (offline app shell and last-known data)
 data/                     shared dataset CSVs
 docs/                     architecture, data model, AI disclosure, diagrams/ (PNG exports)
-scripts/                  db-setup.ts, plan-preview.ts, generate-sample-data.mjs
+scripts/                  db-setup.ts, plan-preview.ts
 tests/                    engine.spec.ts, e2e.spec.ts
 ```
 
@@ -126,7 +126,7 @@ The build keeps the Day 5 flows, screens, copy and visual system (palette, Fraun
 | Day 5 design | Hackathon build | Why |
 | --- | --- | --- |
 | Role switcher and store picker for reviewers | Real accounts per role, vehicle and outlet; server-side authorisation | Each role must only see and change its own work. |
-| Six illustrative orders and three routes | All 120 outlets, 60 vehicles and a 143-order day from the shared datasets | Brief requires seeded shared data and a realistic day. |
+| Six illustrative orders and three routes | All 120 outlets, 60 vehicles and a 138-order day built on the shared datasets | Brief requires seeded shared data and a realistic day. |
 | "Build dispatch plan" review with representative route cards; tradeoff favoured manual judgment over automatic allocation | Engine proposes a complete allocation and explains every deferral; dispatcher edits are validated against all rules | The design's stated next step ("the allocator should propose feasible options; the dispatcher should understand why"). Explainability is kept: binding constraints, reason codes, unavoidable vs chosen. |
 | Mall-window exception workspace for one order | Generalised: window check (W) on every stop, deferred-orders table and per-order change dialog | Same decision, applied to every order. |
 | Schematic network map with illustrative positions | Live trip board (progress per stop, status) | The map positions were not real; the board shows real progress. |
@@ -139,7 +139,7 @@ The build keeps the Day 5 flows, screens, copy and visual system (palette, Fraun
 
 ## Submission checklist (team)
 
-- [ ] Replace `data/*.csv` with the official shared datasets and re-run the walkthrough.
+- [x] Official shared datasets (General Data) loaded from `data/`.
 - [ ] Rename the repository to `TeamName_SolutionName` (GitHub monorepo).
 - [x] Deploy (Vercel + Neon Postgres): https://waypoint-tech-triathlon.vercel.app
 - [ ] Record the 5-8 minute unlisted demo video and add the link.
