@@ -26,7 +26,10 @@ COPY --from=build /app/data ./data
 COPY --from=build /app/scripts/db-setup.ts ./scripts/db-setup.ts
 COPY --from=build /app/src/server ./src/server
 COPY --from=build /app/src/lib/planning ./src/lib/planning
+COPY --from=build /app/src/lib/festivals.ts ./src/lib/festivals.ts
 COPY --from=build /app/package.json ./package.json
+# Next.js writes optimised images to .next/cache at runtime; the app user must own it.
+RUN mkdir -p .next/cache && chown -R waypoint:waypoint .next
 USER waypoint
 EXPOSE 3000
 HEALTHCHECK --interval=15s --timeout=5s --start-period=30s CMD wget -qO- http://127.0.0.1:3000/api/health || exit 1

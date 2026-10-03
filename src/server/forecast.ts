@@ -113,9 +113,15 @@ export async function capacityForecast(fromDate: string, weeks = 8) {
     const days = future.filter(
       (d) => `${d.iso_year}-W${String(d.iso_week).padStart(2, "0")}` === wk,
     );
+    // Festivals fall on non-operating holidays, so read notes from every day of the week.
+    const calendarWeek = calendar.filter(
+      (d) =>
+        d.date >= fromDate &&
+        `${d.iso_year}-W${String(d.iso_week).padStart(2, "0")}` === wk,
+    );
     const notes = [
       ...new Set(
-        days.flatMap((d) => [
+        calendarWeek.flatMap((d) => [
           ...(d.festival ? [festivalName(d.festival)] : []),
           ...(Number(d.festival_ramp) > 0 && !d.festival
             ? ["Festival build-up"]
