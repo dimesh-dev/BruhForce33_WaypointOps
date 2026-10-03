@@ -79,14 +79,49 @@
 }
 
 /* ---------------------------------------------------------------- login */
+/* Soft watercolour washes in the illustration's palette, centred content. */
+main.login-page {
+  /* Overrides the app shell's global main { max-width; margin } so the washes fill the window. */
+  max-width: none;
+  margin: 0;
+  width: 100%;
+}
 .login-page {
+  position: relative;
+  isolation: isolate;
   min-height: 100vh;
-  background: #f5f6f8;
-  padding: max(24px, calc((100vh - 640px) / 2.5)) 24px 24px;
+  padding: 40px 24px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 18px;
+  background:
+    radial-gradient(55% 45% at 4% 0%, #d3ddee 0%, #d3ddee00 70%),
+    radial-gradient(40% 40% at 100% 8%, #dde7d3 0%, #dde7d300 70%),
+    radial-gradient(50% 50% at 96% 100%, #e0d8f0 0%, #e0d8f000 70%),
+    radial-gradient(45% 40% at 0% 100%, #efe3cf 0%, #efe3cf00 70%), #f5f6f8;
+}
+/* Faint dot grid, like planning paper, fading out toward the centre. */
+.login-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(#b9c4d6 1px, transparent 1.2px);
+  background-size: 22px 22px;
+  opacity: 0.75;
+  -webkit-mask-image: radial-gradient(
+    ellipse 75% 70% at 50% 45%,
+    transparent 35%,
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 75% 70% at 50% 45%,
+    transparent 35%,
+    #000 100%
+  );
+  pointer-events: none;
 }
 .login-hero {
   position: relative;
@@ -267,7 +302,7 @@
 .login-footer {
   color: var(--muted);
   font-size: 11px;
-  margin-top: auto;
+  margin-top: 10px;
 }
 @media (max-width: 1180px) {
   .login-panel {
@@ -284,7 +319,8 @@
   }
 }
 @media (max-width: 760px) {
-  .login-page {
+  main.login-page {
+    justify-content: flex-start;
     padding: 16px 16px 20px;
   }
   /* Phones: the illustration becomes a banner above the form. */
