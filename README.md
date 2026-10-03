@@ -104,7 +104,7 @@ src/lib/client/           API hook, formatting, IndexedDB outbox, shared UI
 src/server/               schema, seed, auth, planning, operations, sync, views, forecast
 public/sw.js              service worker (offline app shell and last-known data)
 data/                     shared dataset CSVs
-docs/                     architecture, data model, AI disclosure, diagrams/ (PNG exports), designathon/ (Day 5 rationale)
+docs/                     architecture, data model, AI disclosure, diagrams/ (PNG exports)
 scripts/                  db-setup.ts, plan-preview.ts, generate-sample-data.mjs
 tests/                    engine.spec.ts, e2e.spec.ts
 ```
@@ -118,7 +118,6 @@ See `.env.example`. Key variables: `DATABASE_URL`, `SESSION_SECRET` (required in
 - [Architecture](docs/ARCHITECTURE.md): component and sequence diagrams, planning engine, offline sync and recovery, security.
 - [Data model](docs/DATA-MODEL.md): entity-relationship diagram and how records connect.
 - [AI tool disclosure](docs/AI-DISCLOSURE.md).
-- [Designathon design rationale](docs/designathon/DESIGNATHON.md): the Day 5 specification this build follows (personas, flows, failure scenarios, visual system).
 
 ## Departures from the Designathon submission
 
