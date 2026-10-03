@@ -1,26 +1,41 @@
+# `docker compose up` starts the database, applies the schema, loads the shared
+# datasets and the walkthrough day, and serves Waypoint on http://localhost:3000.
 services:
-  waypoint-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: waypoint_delivery_system
-    restart: unless-stopped
-    ports:
-      - "${PORT:-3000}:3000"
+  db:
+    image: postgres:16-alpine
     environment:
-      - NODE_ENV=production
-      - PORT=3000
-      - HOSTNAME=0.0.0.0
-      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+      POSTGRES_DB: ${POSTGRES_DB:-waypoint}
+      POSTGRES_USER: ${POSTGRES_USER:-waypoint}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-waypoint}
     volumes:
-      - waypoint_data:/app/data
+      - db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/auth || exit 1"]
-      interval: 15s
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-waypoint} -d ${POSTGRES_DB:-waypoint}"]
+      interval: 5s
       timeout: 5s
-      retries: 3
-      start_period: 20s
+      retries: 20
+    restart: unless-stopped
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-waypoint}:${POSTGRES_PASSWORD:-waypoint}@db:5432/${POSTGRES_DB:-waypoint}
+      SESSION_SECRET: ${SESSION_SECRET:-change-me-in-production-please}
+      DEMO_PASSWORD: ${DEMO_PASSWORD:-waypoint2026}
+      DEMO_RUN_DATE: ${DEMO_RUN_DATE:-2026-10-06}
+      DEMO_START: ${DEMO_START:-2026-10-05T14:30:00+05:30}
+      ALLOW_RESET: ${ALLOW_RESET:-true}
+      SHOW_DEMO_ACCOUNTS: ${SHOW_DEMO_ACCOUNTS:-true}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    restart: unless-stopped
 
 volumes:
-  waypoint_data:
-    driver: local
+  db-data:

@@ -1,124 +1,141 @@
-# Waypoint Delivery Planning & Logistics System
-### Tech-Triathlon 2026 · Hackathon Solution
+# Waypoint · Delivery planning for Waypoint Group
 
-A responsive, offline-first multi-role delivery planning and logistics management web application built for **Waypoint Group (Pvt) Ltd**. Connects ordering, dispatch planning, warehouse loading, road delivery, and store receipt across all four operational roles while strictly enforcing all 7 vehicle, capacity, temperature, and operating constraints.
+Tech-Triathlon 2026 · **Hackathon build**. One system that connects ordering, planning, loading, delivery and receipt for Waypoint Group's four roles, built from our Day 5 Designathon design.
 
----
+- **Dispatcher**: closes the order queue, generates a constraint-checked allocation for a day when demand exceeds capacity, edits it with validation, publishes it, follows trips live, resolves issues and plans future capacity.
+- **Loader** (phone or dock tablet): loads each vehicle in reverse stop order, reports shortfalls that hold the vehicle, releases it.
+- **Driver** (phone): starts the trip, records each stop with receiver, quantity, photo and signature, works offline and syncs when coverage returns.
+- **Store manager**: places orders before the 16:00 cutoff, sees the vehicle and arrival time or the deferral reason, confirms what arrived or reports a problem.
 
-## 🔑 Seeded Account Credentials
+Stack: Next.js 16 (App Router, route handlers), React 19, TypeScript, PostgreSQL 16, Tailwind 4 + the Designathon stylesheet, Playwright. No external services or API keys.
 
-The system includes pre-configured seeded accounts for each user role:
+> **Deployed URL:** `[add after deployment]` · **Demo video:** `[add YouTube link]`
 
-| Role | Email / Login | Name | Assigned Location / Asset |
-| :--- | :--- | :--- | :--- |
-| **Dispatcher** | `dispatcher@waypoint.lk` | Amaya Jayasinghe | Peliyagoda Planning Office |
-| **Loader** | `loader@waypoint.lk` | Ruwan Kumara | Peliyagoda Loading Dock 03 |
-| **Driver** | `driver@waypoint.lk` | Kasun Perera | Vehicle `VEH001` (Refrigerated Truck) · Route `R-012` |
-| **Store Manager** | `storemanager@waypoint.lk` | Anjali Fernando | Outlet `OUT001` (Waypoint Fresh · Colombo 03) |
-
----
-
-## 🚀 Quick Start Instructions
-
-### Option 1: Docker Compose (Recommended)
-
-Start the complete application, persistent database, and pre-seeded dataset with a single command:
+## Quick start
 
 ```bash
+cp .env.example .env          # optional; defaults work for a local run
 docker compose up --build
 ```
 
-Access the application at **`http://localhost:3000`**.
+Open http://localhost:3000. The first start creates the schema, loads the datasets in `data/` and seeds the walkthrough day. Restarting keeps your data; the dispatcher's **Reset demo** button (or `docker compose down -v`) restores the seeded day.
 
-### Option 2: Local Development
+### Without Docker
+
+Requires Node.js 22.18+ and PostgreSQL 14+.
 
 ```bash
-# 1. Install dependencies
 npm install
-
-# 2. Run the development server
-npm run dev
+createdb waypoint
+echo 'DATABASE_URL=postgres://localhost/waypoint' > .env.local
+npm run db:setup      # schema + seed (npm run db:reset to start over)
+npm run dev           # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+## Seeded accounts
 
----
+All accounts use the password **`waypoint2026`** (`DEMO_PASSWORD`). The sign-in page also offers one-click buttons for the four walkthrough accounts.
 
-## 🧭 Numbered Judge Walkthrough
+| Role | Username | Scope |
+| --- | --- | --- |
+| Dispatcher | `dispatcher` | Amaya Jayasinghe · all depots |
+| Loader | `loader` | Ruwan Kumara · Peliyagoda dock (`loader.kandy` for Kandy) |
+| Driver | `driver` | Kasun Perera · VEH001, first available Peliyagoda reefer truck |
+| Store manager | `store` | Anjali Fernando · an outlet on VEH001's first trip (OUT047 Fresh · Matara 01 with the bundled data) |
 
-Follow this step-by-step walkthrough to traverse the entire operational loop across all four roles:
+Every vehicle also has a driver login named after it (`veh002` … `veh060`) and every outlet a manager login (`out001` … `out120`), so any order can be followed end to end.
 
-### Step 1: Store Manager Experience (`storemanager@waypoint.lk`)
-1. Open [`http://localhost:3000`](http://localhost:3000) and switch to the **Store Manager** role using the top-right role switcher (or select `Anjali Fernando`).
-2. Notice the live order status for **Waypoint Fresh · Colombo 03** (`OUT001`), displaying expected arrival ETA and the receiving staff schedule.
-3. Use the store picker dropdown to select **Waypoint Fresh · Kadawatha** (`WP-2045`). Observe the **Deferral Notice with Recorded Rationale** explaining why the order was deferred on the previous run, with starvation protection applied for the next run.
-4. Click **New order**, place a Fresh order (chilled crates), and toggle the **Demonstrate an order placed after 4 PM** option. Submit the order and verify it is automatically flagged for the following operating run in compliance with the **4 PM Cutoff Rule**.
+## Seeded scenario
 
-### Step 2: Dispatcher Control Room (`dispatcher@waypoint.lk`)
-1. Switch to the **Dispatcher** role (`Amaya Jayasinghe`).
-2. Navigate to **Dispatch planner** from the sidebar or click **Build dispatch plan**.
-3. Inspect the **7-Rule Feasibility Audit Bar** verifying:
-   - *Rule 1*: Brand & District Isolation
-   - *Rule 2*: Refrigeration Matching (Chilled cargo $\rightarrow$ Reefer vehicles)
-   - *Rule 3*: Vehicle Access (Van-only outlets $\rightarrow$ Vans)
-   - *Rule 4*: Home Depot Matching (Peliyagoda / Kandy)
-   - *Rule 5*: Whole Orders (No split delivery)
-   - *Rule 6*: Capacity Caps (Trip weight $\le$ vehicle cap, volume $\le$ vehicle cap)
-   - *Rule 7*: Trips & Time Budgets (Max 2 trips; Fresh morning $\le 270$ min; Style/Tech day $\le 480$ min)
-4. Click **Re-Solve Engine** or toggle solver strategies (*Priority & Fairness First* vs. *Max Capacity Utilization*).
-5. Review the **Vehicle Trips & Time** tab and **Deferral Log** tab.
-6. Check the confirmation box and click **Publish plan to loading teams**.
+- **Run:** Tuesday 6 October 2026 (`DEMO_RUN_DATE`) from both depots. 143 orders from 90 outlets: Fresh dry and chilled, Style's weekly delivery, Tech as-needed.
+- **Scenario clock:** starts at Monday 5 October 14:30 Colombo time when the data is seeded, then runs in real time (`DEMO_START`; shown in the header). Orders placed before 16:00 join Tuesday's run; later ones, or orders after the dispatcher closes the queue, join Wednesday's.
+- **Capacity pressure:** three Peliyagoda reefer trucks (VEH007-009) and one dry truck are in the workshop, several vehicles have used 80-90% of their weekly fuel quota on Monday, and three outlets carry orders deferred on Monday. Refrigerated capacity binds: the engine serves about 96% and defers the rest with reasons.
 
-### Step 3: Warehouse Loader Dock App (`loader@waypoint.lk`)
-1. Switch to the **Loader** role (`Ruwan Kumara`).
-2. Note the **Reverse Loading Sequence** (*"Last stop loaded in, first stop unloaded out"* / LIFO) ensuring Stop 1 cargo stays accessible at the rear door.
-3. Check all 3 staged loads to complete the loading checklist.
-4. Click **Report a shortfall**, select *Damaged goods*, and submit. Notice the shortfall note instantly appears in the dispatcher's activity inbox.
-5. Click **Confirm vehicle readiness** to clear the vehicle for departure.
+## Judge walkthrough
 
-### Step 4: Driver Mobile App (`driver@waypoint.lk`)
-1. Switch to the **Driver** role (`Kasun Perera`).
-2. Review the turn-by-turn stop sequence for **Route R-012 (Colombo)**.
-3. Click **Simulate offline** to replicate a mobile coverage drop in the hill country or dead zone.
-4. Click **Record delivery & proof**, enter recipient name (*"Anjali Fernando"*), verify crates, and click **Save proof offline**.
-5. Observe that the delivery proof survives page reloads and remains securely queued in **IndexedDB** on the local device.
-6. Click **Reconnect & sync**. The **Reconciliation Engine** automatically synchronizes the queued proof to the backend server via `/api/driver/sync` and resolves any state conflicts.
+Follow one order from the store to receipt. Use a desktop window for the dispatcher and a phone-sized window (or a phone) for the loader, driver and store. Exact counts may vary by one or two orders if you place extra orders.
 
-### Step 5: Store Manager Closes the Receipt Loop
-1. Switch back to **Store Manager**.
-2. Notice the delivery status for Colombo 03 is now updated to **Delivered** with driver proof visible.
-3. Click **Confirm receipt**, check the verification box, and submit. The delivery loop is now 100% complete!
+1. **Store manager places an order.** Sign in as `store`. The right panel shows the next run and its cutoff. Choose **Place a new order** → *Chilled & frozen* → **Place order**. The order number and its run date appear immediately (*Confirm before the cutoff*). The two seeded orders for this outlet show *Confirmed*.
+2. **Dispatcher reviews the queue.** Sign in as `dispatcher` (new window). **Overview** shows the run, reefers available (13/16), the run progress steps and the three outlets skipped on Monday. **Orders** lists every queued order, including the store's new one; filter, search or export CSV.
+3. **Close orders and generate the plan.** **Dispatch planner** → **Close queue** → **Generate plan**. Review the summary (service rate, deferred count, trips, fuel), *What limited service on this run* (refrigerated capacity), the **Deferred orders** table (reason, unavoidable vs dispatcher choice, next run) and the **Vehicles & trips** cards (Fresh 270-minute budget, weight and volume against both limits, depart/return times, fuel; expand a trip to see stops sequenced by window with arrival times).
+4. **Try a change that breaks a rule.** On any chilled stop choose **Change** → pick a vehicle marked *⚠ not refrigerated* → **Validate & apply**. The change is rejected with `R2 … is chilled; … is not refrigerated`. Then defer an order with a reason, or use **Try to serve** on a deferred one; valid changes apply and the summary updates.
+5. **Publish.** **Publish v1**. Loaders, drivers and stores are notified (bell icon). The store's orders now show vehicle, stop number and expected arrival; deferred orders show the reason and next run.
+6. **Loader loads and flags a shortfall.** Sign in as `loader` (phone width). Open **VEH001 · trip 1**. The list is in reverse stop order (*load first* → *load last*). Choose **Report a shortfall**, pick an order and describe it: the vehicle is held (*Shortfall*) and **Mark ready** is disabled.
+7. **Dispatcher decides.** As dispatcher, **Issues** → **Decide** → note → **Release vehicle as loaded** (or **Remove order from trip & defer**, which moves it to Wednesday and tells the store).
+8. **Loader releases the vehicle.** Refresh, check each load, **Mark ready to depart**. The dispatcher overview shows the trip *Ready*.
+9. **Driver delivers, including offline.** Sign in as `driver` on a phone. **Start trip**. At the first stop tap **Work offline** (or turn on airplane mode), then **Record delivery & proof**: receiver, units, optional photo and signature → **Save proof on this phone**. The banner shows *1 record waiting to sync*; reload the page and the record and route are still there. **Reconnect & sync** (or restore the network): the record is sent and the dispatcher's live board updates.
+10. **Complete the stops.** Record the remaining stops online. The store's outlet is one of them (stop 3 with the bundled data). Try **Could not deliver** or **Report a delivery issue** on any stop to see them reach the dispatcher and store.
+11. **Store confirms receipt.** As `store`, the delivered order shows the driver's record (units, receiver, photo/signature on record). **Confirm what arrived** → *Complete* (or *Short delivery*, which opens an issue for the dispatcher). The order moves to *Received*.
+12. **Plan future capacity.** As dispatcher, **Capacity** shows the next eight weeks of demand per brand, chilled volume, vehicle trips needed and peak-day reefer trips against the reefer fleet, with paydays and festival build-up (Deepavali, 8 November). **Fleet & drivers** shows each vehicle's weekly fuel use and lets you send a vehicle to or from the workshop before regenerating.
 
----
+**Offline conflict (optional):** sign in as `driver` in two browsers, take one offline, record a different quantity for the same stop in each, then sync. The second record does not overwrite the first; the dispatcher gets a *Sync conflict* issue showing both proofs.
 
-## ⚙️ Core Engineering & System Features
+**Reset:** dispatcher → **Reset demo** restores the seeded day for the next run-through.
 
-- **Automated Constraint Solver (`src/lib/allocation-engine.ts`)**: Knapsack and bin-packing optimizer that guarantees 100% feasibility against all 7 competition constraints.
-- **Persistent REST API & Storage Layer (`src/lib/db/`)**: File-backed ACID storage with 10 dynamic endpoints for orders, cutoff management, loading sequences, POD records, and seed data.
-- **Offline-First PWA & Reconciliation (`src/lib/offline-db.ts` & `src/lib/reconciliation-engine.ts`)**: Service Worker asset caching, IndexedDB proof queueing, and conflict-resolving batch synchronization.
-- **Degradation Scenarios (`src/lib/degradation-scenarios.ts`)**: Pre-programmed handling for **Mall Window Timeouts**, **Loading Dock Shortfalls**, and **Vehicle Breakdown Re-Allocation**.
+## Datasets
 
----
+`data/` holds the five shared reference files with the booklet's filenames and columns: `outlets.csv`, `vehicles.csv`, `calendar.csv`, `district_travel.csv`, `service_allowance.csv`. The official CSVs were not in the repository while this phase was built, so the files here are **schema-compatible stand-ins** generated by `npm run data:sample` (120 outlets: 80 Fresh, 25 Style, 15 Tech; 60 vehicles: 12 reefer trucks, 40 dry trucks, 8 vans of which 4 are refrigerated; two depots; 12 districts). To use the official data, copy the official files over them (add `deliveries_train.csv` to drive the capacity outlook from real history) and reset the database. Outlet names are derived from brand and district when the CSV has no name column. The seeded orders for the walkthrough day are generated from the outlets and calendar.
 
-## 🧪 Verification & Automated Testing
-
-Run the comprehensive Playwright test suite covering all constraints, API endpoints, and role workflows:
+## Tests and checks
 
 ```bash
-# Run all 32 automated tests
-npm test
-
-# Run TypeScript type validation
 npm run typecheck
-
-# Verify production build compilation
+npm test                                            # planning engine: every rule, booklet trip-time examples, solver behaviour
+E2E_BASE_URL=http://localhost:3000 npm run test:e2e # four-role walkthrough against a running, seeded stack
 npm run build
 ```
 
----
+The end-to-end test resets the data, then runs the walkthrough above: store order, close and plan, rejected manual edit (R2), publish, shortfall and release, offline delivery that survives a reload, sync, idempotent replay and conflict handling, remaining deliveries and store receipt, plus role isolation (403/401) and, against a production build, a full offline reload served by the service worker. First run: `npx playwright install chromium`.
 
-## 📚 Documentation & Deliverables
+## Repository layout
 
-- [Architecture Diagram & Data Model](docs/ARCHITECTURE.md)
-- [AI Tool Disclosure](docs/AI-TOOL-DISCLOSURE.md)
-- [Designathon Book & Rationale](docs/DESIGNATHON.md)
+```
+src/app/                  pages (/, /login) and API route handlers (src/app/api)
+src/components/app/       role screens: dispatcher, planner, tables, capacity, issues, loader, driver, store
+src/lib/planning/         pure planning engine (shared by API, seed and tests)
+src/lib/client/           API hook, formatting, IndexedDB outbox, shared UI
+src/server/               schema, seed, auth, planning, operations, sync, views, forecast
+public/sw.js              service worker (offline app shell and last-known data)
+data/                     shared dataset CSVs
+docs/                     architecture, data model, AI disclosure, Designathon design book
+scripts/                  db-setup.ts, plan-preview.ts, generate-sample-data.mjs; designathon/ tooling
+tests/                    engine.spec.ts, e2e.spec.ts
+```
+
+## Configuration
+
+See `.env.example`. Key variables: `DATABASE_URL`, `SESSION_SECRET` (required in production), `COOKIE_SECURE`, `DEMO_PASSWORD`, `DEMO_RUN_DATE`, `DEMO_START` (`off` for the real clock), `ALLOW_RESET`, `SHOW_DEMO_ACCOUNTS`, `DATA_DIR`.
+
+## Documentation
+
+- [Architecture](docs/ARCHITECTURE.md): component and sequence diagrams, planning engine, offline sync and recovery, security.
+- [Data model](docs/DATA-MODEL.md): entity-relationship diagram and how records connect.
+- [AI tool disclosure](docs/AI-DISCLOSURE.md).
+- [Designathon design book](docs/DESIGNATHON.md) and `docs/Waypoint_Designathon.pdf`: the Day 5 specification this build follows.
+
+## Departures from the Designathon submission
+
+The build keeps the Day 5 flows, screens, copy and visual system (palette, Fraunces/DM Sans type, pencil-and-watercolour illustrations, cards, badges, connectivity banner, reverse-load list, delivery timeline). These changes were made while turning the prototype into a working system:
+
+| Day 5 design | Hackathon build | Why |
+| --- | --- | --- |
+| Role switcher and store picker for reviewers | Real accounts per role, vehicle and outlet; server-side authorisation | Each role must only see and change its own work. |
+| Six illustrative orders and three routes | All 120 outlets, 60 vehicles and a 143-order day from the shared datasets | Brief requires seeded shared data and a realistic day. |
+| "Build dispatch plan" review with representative route cards; tradeoff favoured manual judgment over automatic allocation | Engine proposes a complete allocation and explains every deferral; dispatcher edits are validated against all rules | The design's stated next step ("the allocator should propose feasible options; the dispatcher should understand why"). Explainability is kept: binding constraints, reason codes, unavoidable vs chosen. |
+| Mall-window exception workspace for one order | Generalised: window check (W) on every stop, deferred-orders table and per-order change dialog | Same decision, applied to every order. |
+| Schematic network map with illustrative positions | Live trip board (progress per stop, status) | The map positions were not real; the board shows real progress. |
+| Insights page with illustrative charts | Capacity page: calendar-adjusted weekly outlook, trips and reefer trips vs fleet | Supports "plan future capacity" with real data. |
+| Proof note standing in for photo and signature | Receiver, units, camera photo and signature pad, stored offline | Specified as later-build work on Day 5. |
+| "Simulate offline" with localStorage | Service worker + IndexedDB outbox, idempotent sync, conflicts kept for review | Day 5 failure scenario B, built for real; the simulate control remains for demos. |
+| Loader readiness was not a safety gate | Shortfall blocks release until the dispatcher decides | Day 5 noted this as production behaviour. |
+| — | Issues inbox, fleet workshop toggle and weekly fuel view, demo reset | Needed to operate and demonstrate the workflow. |
+| Guided tour | Numbered walkthrough above and one-click accounts on sign-in | Judges follow the README. |
+
+## Submission checklist (team)
+
+- [ ] Replace `data/*.csv` with the official shared datasets and re-run the walkthrough.
+- [ ] Rename the repository to `TeamName_SolutionName` (GitHub monorepo).
+- [ ] Deploy (any Docker host with PostgreSQL), set `SESSION_SECRET`, `COOKIE_SECURE=true`, and add the URL above.
+- [ ] Record the 5-8 minute unlisted demo video and add the link.
+- [ ] Complete the bracketed parts of `docs/AI-DISCLOSURE.md`.
+- [ ] Submit repository link, URL, credentials and video before Sunday 4 October 2026, 23:59 Sri Lanka time.

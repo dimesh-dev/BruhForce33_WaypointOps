@@ -1,6 +1,6 @@
 {
-  "name": "waypoint-designathon",
-  "version": "1.0.0",
+  "name": "waypoint",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,22 +8,25 @@
     "build": "next build",
     "start": "next start --hostname 0.0.0.0",
     "typecheck": "tsc --noEmit",
-    "test": "playwright test",
-    "export:design": "node scripts/export-design.mjs",
-    "format": "prettier --write src tests scripts/*.mjs *.ts *.mjs",
-    "capture:design": "node scripts/capture-design.mjs",
-    "record:demo": "node scripts/record-demo.mjs",
-    "package:design": "python3 scripts/package-design.py"
+    "db:setup": "node --env-file-if-exists=.env.local scripts/db-setup.ts",
+    "db:reset": "node --env-file-if-exists=.env.local scripts/db-setup.ts --reset",
+    "plan:preview": "node --env-file-if-exists=.env.local scripts/plan-preview.ts",
+    "data:sample": "node scripts/generate-sample-data.mjs data",
+    "test": "playwright test tests/engine.spec.ts",
+    "test:e2e": "playwright test tests/e2e.spec.ts",
+    "format": "prettier --write src tests scripts *.ts",
+    "designathon:export": "node scripts/designathon/export-design.mjs",
+    "designathon:capture": "node scripts/designathon/capture-design.mjs",
+    "designathon:package": "python3 scripts/designathon/package-design.py"
   },
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.3.0",
     "@fontsource-variable/fraunces": "^5.3.0",
     "@fontsource/plus-jakarta-sans": "^5.3.0",
     "@tailwindcss/postcss": "^4.3.3",
-    "@types/better-sqlite3": "^9.6.0",
-    "better-sqlite3": "^13.0.3",
     "lucide-react": "^0.577.0",
     "next": "^16.3.6",
+    "pg": "^8.23.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "tailwindcss": "^4.3.3"
@@ -32,9 +35,13 @@
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.58.2",
     "@types/node": "^26.6.3",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "prettier": "^3.9.9",
     "typescript": "^7.0.2"
+  },
+  "engines": {
+    "node": ">=22.18"
   }
 }

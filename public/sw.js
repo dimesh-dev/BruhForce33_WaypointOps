@@ -1,87 +1,61 @@
-/**
- * Waypoint Service Worker - Offline-First Driver Operation & PWA Support
- * Tech-Triathlon 2026 Resilient Offline Operation
+/*
+ * Waypoint service worker.
+ * - Navigations and GET /api/* reads: network first, falling back to the last
+ *   cached copy, so the app opens and shows the last known route without signal.
+ * - Static build assets and images: cache first.
+ * - Writes (POST/PATCH) are never cached; the driver app queues them in IndexedDB.
  */
-
-const CACHE_NAME = "waypoint-cache-v1";
-const STATIC_ASSETS = [
-  "/",
-  "/favicon.svg",
-  "/manifest.json",
-  "/apple-touch-icon.png",
-  "/images/waypoint-team-sketch.png",
-  "/images/dispatch-studio.png",
-  "/images/loading-dock.png",
-  "/images/on-the-road.png",
-  "/images/neighborhood-store.png",
-];
+const VERSION = "waypoint-v1";
+const SHELL = ["/", "/login", "/favicon.svg", "/images/on-the-road.png", "/images/loading-dock.png"];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS).catch((err) => {
-        console.warn("Some assets failed to precache in service worker:", err);
-      });
-    })
-  );
-  self.skipWaiting();
+  event.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL).catch(() => {})).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
-      );
-    })
+    caches
+      .keys()
+      .then((keys) => Promise.all(keys.filter((k) => k !== VERSION).map((k) => caches.delete(k))))
+      .then(() => self.clients.claim()),
   );
-  self.clients.claim();
 });
 
-self.addEventListener("fetch", (event) => {
-  const request = event.request;
-  const url = new URL(request.url);
+self.addEventListener("message", (event) => {
+  if (event.data === "clear") event.waitUntil(caches.delete(VERSION));
+});
 
-  // Handle API requests with Network-First, Cache-Fallback
-  if (url.pathname.startsWith("/api/")) {
-    event.respondWith(
-      fetch(request)
-        .then((response) => {
-          if (response.ok && request.method === "GET") {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          }
-          return response;
-        })
-        .catch(() => {
-          return caches.match(request).then((cachedResponse) => {
-            if (cachedResponse) return cachedResponse;
-            return new Response(
-              JSON.stringify({
-                offline: true,
-                message: "Offline mode active. Request served from local fallback.",
-              }),
-              { headers: { "Content-Type": "application/json" } }
-            );
-          });
-        })
-    );
-    return;
+async function networkFirst(request) {
+  const cache = await caches.open(VERSION);
+  try {
+    const response = await fetch(request);
+    if (response.ok) cache.put(request, response.clone());
+    return response;
+  } catch (error) {
+    const cached = (await cache.match(request)) || (request.mode === "navigate" ? await cache.match("/") : undefined);
+    if (cached) return cached;
+    if (request.url.includes("/api/"))
+      return new Response(JSON.stringify({ error: "You are offline." }), { status: 503, headers: { "content-type": "application/json" } });
+    throw error;
   }
+}
 
-  // Handle Static files with Cache-First, Network-Fallback
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      return (
-        cached ||
-        fetch(request).then((response) => {
-          if (response.ok && request.method === "GET") {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-          }
-          return response;
-        })
-      );
-    })
-  );
+async function cacheFirst(request) {
+  const cache = await caches.open(VERSION);
+  const cached = await cache.match(request);
+  if (cached) return cached;
+  const response = await fetch(request);
+  if (response.ok) cache.put(request, response.clone());
+  return response;
+}
+
+self.addEventListener("fetch", (event) => {
+  const { request } = event;
+  if (request.method !== "GET") return;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+  if (url.pathname.startsWith("/api/auth") || url.pathname === "/api/events") return;
+  if (url.pathname.startsWith("/_next/static") || url.pathname.startsWith("/images/") || url.pathname.startsWith("/_next/image"))
+    event.respondWith(cacheFirst(request));
+  else if (request.mode === "navigate" || url.pathname.startsWith("/api/")) event.respondWith(networkFirst(request));
 });

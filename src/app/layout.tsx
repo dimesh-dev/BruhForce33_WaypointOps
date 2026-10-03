@@ -6,11 +6,13 @@ import "@fontsource-variable/fraunces/opsz-italic.css";
 // Plus Jakarta Sans is kept only for the Waypoint wordmark.
 import "@fontsource/plus-jakarta-sans/700.css";
 import "./globals.css";
+import "./ops.css";
 export const metadata: Metadata = {
   title: "Waypoint · A better way forward",
   description:
     "A connected delivery experience. Interactive Designathon prototype for Waypoint Group.",
   icons: { icon: "/favicon.svg", apple: "/apple-touch-icon.png" },
+  manifest: "/manifest.json",
 };
 export default function RootLayout({
   children,

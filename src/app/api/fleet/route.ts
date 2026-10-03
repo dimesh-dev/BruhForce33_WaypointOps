@@ -1,17 +1,9 @@
-import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { requireUser, route } from "@/server/http.ts";
+import { currentRunDate, fleetView } from "@/server/views.ts";
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const depot = searchParams.get("depot") || undefined;
-  const type = searchParams.get("type") || undefined;
-  const temp = searchParams.get("temp") || undefined;
-  const status = searchParams.get("status") || undefined;
-
-  const vehicles = db.getVehicles({ depot, type, temp, status });
-  return NextResponse.json({
-    success: true,
-    count: vehicles.length,
-    vehicles,
-  });
-}
+export const GET = route(async (req) => {
+  await requireUser("dispatcher");
+  const date =
+    new URL(req.url).searchParams.get("date") ?? (await currentRunDate());
+  return { vehicles: await fleetView(date) };
+});
