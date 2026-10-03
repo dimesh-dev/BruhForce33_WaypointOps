@@ -18,7 +18,8 @@ export default async function LoginPage() {
   }>(
     "SELECT username, display_name, role, vehicle_id, outlet_id, depot FROM users WHERE featured ORDER BY id",
   );
-  const showDemo = process.env.SHOW_DEMO_ACCOUNTS !== "false";
+  // Credentials are shared privately; the one-click account list is opt-in for local demos only.
+  const showDemo = process.env.SHOW_DEMO_ACCOUNTS === "true";
   return (
     <LoginForm
       accounts={showDemo ? accounts : []}

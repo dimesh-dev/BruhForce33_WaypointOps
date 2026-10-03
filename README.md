@@ -41,7 +41,7 @@ npm run dev           # http://localhost:3000
 
 ## Seeded accounts
 
-All accounts use the password **`waypoint2026`** (`DEMO_PASSWORD`). The sign-in page also offers one-click buttons for the four walkthrough accounts.
+All accounts use the password **`waypoint2026`** (`DEMO_PASSWORD`). The sign-in page does not list accounts; set `SHOW_DEMO_ACCOUNTS=true` for one-click sign-in during a local demo.
 
 | Role | Username | Scope |
 | --- | --- | --- |
@@ -135,7 +135,7 @@ The build keeps the Day 5 flows, screens, copy and visual system (palette, Fraun
 | "Simulate offline" with localStorage | Service worker + IndexedDB outbox, idempotent sync, conflicts kept for review | Day 5 failure scenario B, built for real; the simulate control remains for demos. |
 | Loader readiness was not a safety gate | Shortfall blocks release until the dispatcher decides | Day 5 noted this as production behaviour. |
 | — | Issues inbox, fleet workshop toggle and weekly fuel view, demo reset | Needed to operate and demonstrate the workflow. |
-| Guided tour | Numbered walkthrough above and one-click accounts on sign-in | Judges follow the README. |
+| Guided tour | Numbered walkthrough above | Judges follow the README. |
 
 ## Submission checklist (team)
 

@@ -9,3 +9,6 @@ playwright-report/
 .env
 .env.local
 .env*.local
+
+# Credentials shared privately through the submission form
+SUBMISSION-CREDENTIALS.txt
