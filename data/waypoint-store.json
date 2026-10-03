@@ -2,7 +2,8 @@
   "users": [
     {
       "id": "USR-001",
-      "email": "amaya@waypoint.lk",
+      "email": "dispatcher@waypoint.lk",
+      "alias": "amaya@waypoint.lk",
       "name": "Amaya Jayasinghe",
       "role": "Dispatcher",
       "initials": "AJ",
@@ -12,7 +13,8 @@
     },
     {
       "id": "USR-002",
-      "email": "ruwan@waypoint.lk",
+      "email": "loader@waypoint.lk",
+      "alias": "ruwan@waypoint.lk",
       "name": "Ruwan Kumara",
       "role": "Loader",
       "initials": "RK",
@@ -22,7 +24,8 @@
     },
     {
       "id": "USR-003",
-      "email": "kasun@waypoint.lk",
+      "email": "driver@waypoint.lk",
+      "alias": "kasun@waypoint.lk",
       "name": "Kasun Perera",
       "role": "Driver",
       "initials": "KP",
@@ -32,7 +35,8 @@
     },
     {
       "id": "USR-004",
-      "email": "anjali@waypoint.lk",
+      "email": "storemanager@waypoint.lk",
+      "alias": "anjali@waypoint.lk",
       "name": "Anjali Fernando",
       "role": "Store manager",
       "initials": "AF",
@@ -2694,8 +2698,8 @@
       "deferral_reason": "Received after 4:00 PM cutoff; queued for following operating run.",
       "receipt_confirmed": false,
       "order_id": "ORD92331",
-      "created_at": "2026-10-03T06:28:39.543Z",
-      "updated_at": "2026-10-03T06:28:39.543Z"
+      "created_at": "2026-10-03T06:39:45.886Z",
+      "updated_at": "2026-10-03T06:39:45.886Z"
     },
     {
       "order_id": "ORD0092301",
@@ -2725,7 +2729,7 @@
       "days_since_last_served": 1,
       "receipt_confirmed": true,
       "created_at": "2026-09-27T14:30:00Z",
-      "updated_at": "2026-10-03T06:28:41.202Z",
+      "updated_at": "2026-10-03T06:39:47.378Z",
       "receipt_notes": "All quantities verified.",
       "reported_discrepancy": "Loading shortfall: damaged - WP-2041: two damaged crates, replacements needed."
     },
@@ -2874,7 +2878,7 @@
       "days_since_last_served": 1,
       "receipt_confirmed": true,
       "created_at": "2026-09-27T14:10:00Z",
-      "updated_at": "2026-10-03T06:28:26.718Z",
+      "updated_at": "2026-10-03T06:39:34.085Z",
       "receipt_notes": "Delivered in hill area offline. Reconnected at 07:15 AM."
     },
     {
@@ -3589,8 +3593,8 @@
       "status": "loaded",
       "shortfall_type": "damaged",
       "shortfall_notes": "WP-2041: two damaged crates, replacements needed.",
-      "id": "LOAD-1791008921200-277",
-      "timestamp": "2026-10-03T06:28:41.200Z"
+      "id": "LOAD-1791009587377-971",
+      "timestamp": "2026-10-03T06:39:47.377Z"
     }
   ],
   "podRecords": [
@@ -3603,9 +3607,9 @@
       "condition_confirmed": true,
       "proof_notes": "Reconciled proof from offline storage in Colombo 03.",
       "offline_queued": true,
-      "synced_at": "2026-10-03T06:28:26.871Z",
-      "id": "POD-1791008906871",
-      "delivered_at": "2026-10-03T06:28:26.871Z"
+      "synced_at": "2026-10-03T06:39:34.212Z",
+      "id": "POD-1791009574212",
+      "delivered_at": "2026-10-03T06:39:34.212Z"
     },
     {
       "order_id": "WP-2041",
@@ -3616,9 +3620,9 @@
       "condition_confirmed": true,
       "proof_notes": "Received by Anjali Fernando. 24 of 24 crates. 24 sealed crates handed over at rear dock.",
       "offline_queued": true,
-      "synced_at": "2026-10-03T06:28:37.222Z",
-      "id": "POD-1791008917222",
-      "delivered_at": "2026-10-03T06:28:37.222Z"
+      "synced_at": "2026-10-03T06:39:43.583Z",
+      "id": "POD-1791009583583",
+      "delivered_at": "2026-10-03T06:39:43.583Z"
     }
   ],
   "deferralLogs": [],
@@ -3630,5 +3634,5 @@
     "published_at": "2026-09-28T04:45:00Z",
     "published_by": "Amaya Jayasinghe"
   },
-  "lastUpdated": "2026-10-03T06:28:41.202Z"
+  "lastUpdated": "2026-10-03T06:39:47.379Z"
 }
