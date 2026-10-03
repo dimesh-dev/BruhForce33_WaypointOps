@@ -6,6 +6,7 @@
 export interface DbUser {
   id: string;
   email: string;
+  alias?: string;
   name: string;
   role: "Dispatcher" | "Loader" | "Driver" | "Store manager";
   initials: string;

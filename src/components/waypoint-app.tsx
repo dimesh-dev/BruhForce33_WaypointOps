@@ -91,6 +91,14 @@ export default function WaypointApp() {
     setPage("Overview");
     setRoleOpen(false);
     setSidebar(false);
+    const persona = roleInfo[r];
+    if (persona?.email) {
+      fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: persona.email, role: r }),
+      }).catch(() => {});
+    }
   };
   const sync = () => {
     queued.forEach((q) =>
@@ -367,10 +375,25 @@ export default function WaypointApp() {
                         ][i]
                       }
                     </small>
+                    <span style={{ display: "block", fontSize: "11px", color: "var(--accent-dark, #526b95)", marginTop: "2px", fontFamily: "monospace" }}>
+                      {roleInfo[r].email}
+                    </span>
                   </span>
                   {role === r && <Check size={17} />}
                 </button>
               ))}
+              <div style={{ borderTop: "1px solid var(--line, #e7e9ee)", marginTop: "8px", paddingTop: "8px" }}>
+                <button
+                  style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "8px 10px", fontSize: "12px", color: "var(--ink)", borderRadius: "6px" }}
+                  onClick={() => {
+                    setRoleOpen(false);
+                    setModal({ type: "auth" });
+                  }}
+                >
+                  <ShieldCheck size={15} style={{ color: "#2563eb" }} />
+                  <span><strong>Seeded Accounts & Role Auth</strong></span>
+                </button>
+              </div>
             </div>
           </>
         )}

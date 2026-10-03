@@ -14,7 +14,8 @@ import type {
 export const SEEDED_USERS: DbUser[] = [
   {
     id: "USR-001",
-    email: "amaya@waypoint.lk",
+    email: "dispatcher@waypoint.lk",
+    alias: "amaya@waypoint.lk",
     name: "Amaya Jayasinghe",
     role: "Dispatcher",
     initials: "AJ",
@@ -24,7 +25,8 @@ export const SEEDED_USERS: DbUser[] = [
   },
   {
     id: "USR-002",
-    email: "ruwan@waypoint.lk",
+    email: "loader@waypoint.lk",
+    alias: "ruwan@waypoint.lk",
     name: "Ruwan Kumara",
     role: "Loader",
     initials: "RK",
@@ -34,7 +36,8 @@ export const SEEDED_USERS: DbUser[] = [
   },
   {
     id: "USR-003",
-    email: "kasun@waypoint.lk",
+    email: "driver@waypoint.lk",
+    alias: "kasun@waypoint.lk",
     name: "Kasun Perera",
     role: "Driver",
     initials: "KP",
@@ -44,7 +47,8 @@ export const SEEDED_USERS: DbUser[] = [
   },
   {
     id: "USR-004",
-    email: "anjali@waypoint.lk",
+    email: "storemanager@waypoint.lk",
+    alias: "anjali@waypoint.lk",
     name: "Anjali Fernando",
     role: "Store manager",
     initials: "AF",

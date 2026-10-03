@@ -20,6 +20,10 @@ import {
   RotateCcw,
   Camera,
   Send,
+  Navigation,
+  Mail,
+  Lock,
+  UserCheck,
 } from "lucide-react";
 import type { Order, ModalProps } from "@/lib/types";
 import { initialOrders, routes } from "@/lib/demo-data";
@@ -74,7 +78,10 @@ export function Modal({
     [mapRoute, setMapRoute] = useState(0),
     [planTab, setPlanTab] = useState<"audit" | "trips" | "deferrals">("audit"),
     [solverStrategy, setSolverStrategy] = useState<"priority_first" | "max_utilization" | "balanced">("priority_first"),
-    [solvedReport, setSolvedReport] = useState<FeasibilityReport | null>(null);
+    [solvedReport, setSolvedReport] = useState<FeasibilityReport | null>(null),
+    [customEmail, setCustomEmail] = useState(""),
+    [authError, setAuthError] = useState(""),
+    [authLoading, setAuthLoading] = useState(false);
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
     document.body.style.overflow = "hidden";
@@ -128,6 +135,8 @@ export function Modal({
     guide: "A better way forward.",
     date: "Your operating day.",
     map: "Your network, in focus.",
+    auth: "Seeded Accounts & Role Authentication",
+    login: "Seeded Accounts & Role Authentication",
   };
   const exception = orders.find((o) => o.id === selected) ?? initialOrders[2];
   return (
@@ -1139,6 +1148,195 @@ export function Modal({
                   {routes[mapRoute].stops} stops · next arrival{" "}
                   {routes[mapRoute].eta}
                 </p>
+              </div>
+            </>
+          )}
+          {(modal.type === "auth" || modal.type === "login") && (
+            <>
+              <p className="modal-intro">
+                Waypoint is equipped with four official role accounts. Click any account below to switch roles and authenticate via the backend API, or enter credentials manually.
+              </p>
+
+              <div style={{ display: "grid", gap: "10px", margin: "16px 0" }}>
+                {[
+                  {
+                    role: "Dispatcher" as const,
+                    email: "dispatcher@waypoint.lk",
+                    alias: "amaya@waypoint.lk",
+                    name: "Amaya Jayasinghe",
+                    title: "Network Dispatcher & Planning Lead",
+                    location: "Peliyagoda Central Planning Office",
+                    icon: Route,
+                  },
+                  {
+                    role: "Loader" as const,
+                    email: "loader@waypoint.lk",
+                    alias: "ruwan@waypoint.lk",
+                    name: "Ruwan Kumara",
+                    title: "Loading Dock Supervisor",
+                    location: "Peliyagoda Loading Dock 03",
+                    icon: Truck,
+                  },
+                  {
+                    role: "Driver" as const,
+                    email: "driver@waypoint.lk",
+                    alias: "kasun@waypoint.lk",
+                    name: "Kasun Perera",
+                    title: "Senior Fleet Delivery Driver",
+                    location: "Vehicle VEH001 · Route R-012 (Colombo)",
+                    icon: Navigation,
+                  },
+                  {
+                    role: "Store manager" as const,
+                    email: "storemanager@waypoint.lk",
+                    alias: "anjali@waypoint.lk",
+                    name: "Anjali Fernando",
+                    title: "Supermarket Store Manager",
+                    location: "Waypoint Fresh · Colombo 03 (OUT001)",
+                    icon: Store,
+                  },
+                ].map((acc) => (
+                  <div
+                    key={acc.email}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: "12px 14px",
+                      borderRadius: "10px",
+                      border: "1px solid var(--line, #e7e9ee)",
+                      background: "var(--paper, #fff)",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                      <div
+                        style={{
+                          width: "36px",
+                          height: "36px",
+                          borderRadius: "8px",
+                          background: "var(--line, #eef2f6)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "var(--accent-dark, #526b95)",
+                        }}
+                      >
+                        <acc.icon size={18} />
+                      </div>
+                      <div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          <strong>{acc.name}</strong>
+                          <span
+                            style={{
+                              fontSize: "11px",
+                              padding: "2px 6px",
+                              borderRadius: "4px",
+                              background: "rgba(104, 127, 166, 0.15)",
+                              color: "var(--accent-dark, #526b95)",
+                              fontWeight: 600,
+                            }}
+                          >
+                            {acc.role}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: "12px", color: "var(--muted, #7b8491)", fontFamily: "monospace" }}>
+                          {acc.email} <span style={{ opacity: 0.65 }}>({acc.alias})</span>
+                        </div>
+                        <div style={{ fontSize: "11px", color: "var(--muted, #7b8491)", marginTop: "2px" }}>
+                          {acc.location}
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      className="btn secondary"
+                      style={{ fontSize: "12px", padding: "6px 12px" }}
+                      onClick={async () => {
+                        setAuthLoading(true);
+                        try {
+                          const res = await fetch("/api/auth", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ email: acc.email, role: acc.role }),
+                          });
+                          const data = await res.json();
+                          if (data.success) {
+                            localStorage.setItem("waypoint-role-v1", JSON.stringify(acc.role));
+                            notify(`Authenticated as ${acc.name} (${acc.role})`);
+                            location.reload();
+                          } else {
+                            setAuthError(data.error || "Authentication failed");
+                          }
+                        } catch {
+                          localStorage.setItem("waypoint-role-v1", JSON.stringify(acc.role));
+                          notify(`Switched to ${acc.role}`);
+                          location.reload();
+                        } finally {
+                          setAuthLoading(false);
+                        }
+                      }}
+                    >
+                      <UserCheck size={14} /> Sign In
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ borderTop: "1px solid var(--line, #e7e9ee)", paddingTop: "14px", marginTop: "14px" }}>
+                <label style={{ fontSize: "12px", fontWeight: 600, display: "block", marginBottom: "6px" }}>
+                  Custom Email Authentication
+                </label>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <input
+                    type="email"
+                    placeholder="e.g. dispatcher@waypoint.lk"
+                    value={customEmail}
+                    onChange={(e) => {
+                      setCustomEmail(e.target.value);
+                      setAuthError("");
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: "8px 12px",
+                      borderRadius: "6px",
+                      border: "1px solid var(--line, #e7e9ee)",
+                      fontSize: "13px",
+                    }}
+                  />
+                  <button
+                    className="btn primary"
+                    disabled={!customEmail.trim() || authLoading}
+                    onClick={async () => {
+                      setAuthLoading(true);
+                      setAuthError("");
+                      try {
+                        const res = await fetch("/api/auth", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ email: customEmail.trim() }),
+                        });
+                        const data = await res.json();
+                        if (data.success && data.user) {
+                          localStorage.setItem("waypoint-role-v1", JSON.stringify(data.user.role));
+                          notify(`Authenticated as ${data.user.name} (${data.user.role})`);
+                          location.reload();
+                        } else {
+                          setAuthError(data.error || "Invalid credentials");
+                        }
+                      } catch {
+                        setAuthError("Network error during authentication");
+                      } finally {
+                        setAuthLoading(false);
+                      }
+                    }}
+                  >
+                    {authLoading ? "Verifying..." : "Authenticate"}
+                  </button>
+                </div>
+                {authError && (
+                  <p style={{ color: "#e11d48", fontSize: "12px", marginTop: "6px" }}>
+                    ⚠ {authError}
+                  </p>
+                )}
               </div>
             </>
           )}

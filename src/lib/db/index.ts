@@ -136,8 +136,25 @@ class DatabaseClient {
   }
 
   getUserByEmail(email: string): DbUser | undefined {
+    const normalized = email.toLowerCase().trim();
+    const aliasMap: Record<string, string> = {
+      "dispatcher@waypoint.lk": "amaya@waypoint.lk",
+      "loader@waypoint.lk": "ruwan@waypoint.lk",
+      "driver@waypoint.lk": "kasun@waypoint.lk",
+      "storemanager@waypoint.lk": "anjali@waypoint.lk",
+      "store_manager@waypoint.lk": "anjali@waypoint.lk",
+      "amaya@waypoint.lk": "dispatcher@waypoint.lk",
+      "ruwan@waypoint.lk": "loader@waypoint.lk",
+      "kasun@waypoint.lk": "driver@waypoint.lk",
+      "anjali@waypoint.lk": "storemanager@waypoint.lk",
+    };
+    const targetAlias = aliasMap[normalized];
     return this.ensureInitialized().users.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase()
+      (u) =>
+        u.email.toLowerCase() === normalized ||
+        (u.alias && u.alias.toLowerCase() === normalized) ||
+        (targetAlias && u.email.toLowerCase() === targetAlias) ||
+        (targetAlias && u.alias && u.alias.toLowerCase() === targetAlias)
     );
   }
 

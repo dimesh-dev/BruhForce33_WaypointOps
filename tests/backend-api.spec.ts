@@ -11,14 +11,41 @@ test.describe("Waypoint Backend, Database & API Endpoints", () => {
     const listData = await listRes.json();
     expect(listData.seededAccounts).toHaveLength(4);
 
-    // Test Dispatcher login
-    const loginRes = await request.post("/api/auth", {
-      data: { email: "amaya@waypoint.lk" },
+    // 1. Test Dispatcher login
+    const dispRes = await request.post("/api/auth", {
+      data: { email: "dispatcher@waypoint.lk" },
     });
-    expect(loginRes.ok()).toBe(true);
-    const loginData = await loginRes.json();
-    expect(loginData.user.role).toBe("Dispatcher");
-    expect(loginData.user.name).toBe("Amaya Jayasinghe");
+    expect(dispRes.ok()).toBe(true);
+    const dispData = await dispRes.json();
+    expect(dispData.user.role).toBe("Dispatcher");
+    expect(dispData.user.name).toBe("Amaya Jayasinghe");
+
+    // 2. Test Loader login
+    const loaderRes = await request.post("/api/auth", {
+      data: { email: "loader@waypoint.lk" },
+    });
+    expect(loaderRes.ok()).toBe(true);
+    const loaderData = await loaderRes.json();
+    expect(loaderData.user.role).toBe("Loader");
+    expect(loaderData.user.name).toBe("Ruwan Kumara");
+
+    // 3. Test Driver login
+    const driverRes = await request.post("/api/auth", {
+      data: { email: "driver@waypoint.lk" },
+    });
+    expect(driverRes.ok()).toBe(true);
+    const driverData = await driverRes.json();
+    expect(driverData.user.role).toBe("Driver");
+    expect(driverData.user.name).toBe("Kasun Perera");
+
+    // 4. Test Store Manager login
+    const smRes = await request.post("/api/auth", {
+      data: { email: "storemanager@waypoint.lk" },
+    });
+    expect(smRes.ok()).toBe(true);
+    const smData = await smRes.json();
+    expect(smData.user.role).toBe("Store manager");
+    expect(smData.user.name).toBe("Anjali Fernando");
   });
 
   test("Outlets & Fleet Datasets: Ingests 120 outlets and 60 vehicles", async ({ request }) => {
