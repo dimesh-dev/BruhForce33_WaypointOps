@@ -25,6 +25,7 @@ import {
   shortDate,
 } from "@/lib/client/format";
 import type { Clock, Me } from "@/lib/client/types";
+import { NumberField, Select } from "@/lib/client/controls";
 import { Badge, Dialog, Empty, useToast } from "@/lib/client/ui";
 
 interface StoreOrder {
@@ -514,42 +515,41 @@ function OrderDialog({
           </div>
         )}
         <div className="field-row">
-          <label className="field">
-            {brand === "Tech"
-              ? "Items"
-              : brand === "Style"
-                ? "Cartons / rails"
-                : "Cases"}
-            <input
-              type="number"
-              min={1}
-              value={units}
-              onChange={(e) => setUnits(Number(e.target.value))}
-              required
-            />
-          </label>
-          <label className="field">
-            Weight (kg)
-            <input
-              type="number"
-              min={1}
-              step="any"
-              value={weight}
-              onChange={(e) => setWeight(Number(e.target.value))}
-              required
-            />
-          </label>
-          <label className="field">
-            Volume (m³)
-            <input
-              type="number"
-              min={0.1}
-              step="0.1"
-              value={volume}
-              onChange={(e) => setVolume(Number(e.target.value))}
-              required
-            />
-          </label>
+          <NumberField
+            label={
+              brand === "Tech"
+                ? "Items"
+                : brand === "Style"
+                  ? "Cartons / rails"
+                  : "Cases"
+            }
+            value={units}
+            onChange={setUnits}
+            min={1}
+            max={5000}
+            required
+          />
+          <NumberField
+            label="Weight"
+            suffix="kg"
+            value={weight}
+            onChange={setWeight}
+            min={1}
+            max={8000}
+            step={50}
+            required
+          />
+          <NumberField
+            label="Volume"
+            suffix="m³"
+            value={volume}
+            onChange={setVolume}
+            min={0.1}
+            max={45}
+            step={0.5}
+            decimals={1}
+            required
+          />
         </div>
         <label className="field">
           Note for the dispatcher (optional)
@@ -615,26 +615,31 @@ function ReceiptDialog({
           The driver recorded {order.proof?.units_delivered ?? 0} of{" "}
           {order.units} units. Confirm what your team actually received.
         </p>
-        <label className="field">
-          Units received
-          <input
-            type="number"
-            min={0}
-            value={units}
-            onChange={(e) => setUnits(Number(e.target.value))}
-          />
-        </label>
-        <label className="field">
-          Condition
-          <select
-            value={condition}
-            onChange={(e) => setCondition(e.target.value as typeof condition)}
-          >
-            <option value="complete">Complete and in good condition</option>
-            <option value="short">Short delivery</option>
-            <option value="damaged">Damaged goods</option>
-          </select>
-        </label>
+        <NumberField
+          label="Units received"
+          value={units}
+          onChange={setUnits}
+          min={0}
+          max={order.units * 2}
+        />
+        <Select
+          label="Condition"
+          value={condition}
+          onChange={setCondition}
+          options={[
+            { value: "complete", label: "Complete and in good condition" },
+            {
+              value: "short",
+              label: "Short delivery",
+              hint: "Opens an issue for the dispatcher",
+            },
+            {
+              value: "damaged",
+              label: "Damaged goods",
+              hint: "Opens an issue for the dispatcher",
+            },
+          ]}
+        />
         <label className="field">
           Note
           <textarea
@@ -682,23 +687,18 @@ function StoreIssueDialog({
           }
         }}
       >
-        <label className="field">
-          Issue type
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            {[
-              "Delivery delay",
-              "Quantity discrepancy",
-              "Damaged goods",
-              "Wrong items",
-              "Receiving staff unavailable",
-            ].map((x) => (
-              <option key={x}>{x}</option>
-            ))}
-          </select>
-        </label>
+        <Select
+          label="Issue type"
+          value={category}
+          onChange={setCategory}
+          options={[
+            "Delivery delay",
+            "Quantity discrepancy",
+            "Damaged goods",
+            "Wrong items",
+            "Receiving staff unavailable",
+          ]}
+        />
         <label className="field">
           What happened?
           <textarea

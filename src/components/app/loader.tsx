@@ -20,6 +20,7 @@ import {
   TRIP_STATUS,
 } from "@/lib/client/format";
 import type { Issue, Me, Trip } from "@/lib/client/types";
+import { NumberField, Select } from "@/lib/client/controls";
 import { Badge, Dialog, Empty, useToast } from "@/lib/client/ui";
 
 interface LoaderData {
@@ -425,42 +426,35 @@ function ShortfallDialog({
           }
         }}
       >
-        <label className="field">
-          Affected order
-          <select value={orderId} onChange={(e) => setOrderId(e.target.value)}>
-            {trip.stops.map((s) => (
-              <option key={s.id} value={s.order_id}>
-                Stop {s.seq} · {s.outlet_name} · {s.order_id}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="field">
-          Problem
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            {[
-              "Missing items",
-              "Damaged goods",
-              "Temperature concern",
-              "Does not fit vehicle",
-            ].map((x) => (
-              <option key={x}>{x}</option>
-            ))}
-          </select>
-        </label>
-        <label className="field">
-          Units affected
-          <input
-            type="number"
-            min={1}
-            value={units}
-            onChange={(e) => setUnits(Number(e.target.value))}
-            required
-          />
-        </label>
+        <Select
+          label="Affected order"
+          value={orderId}
+          onChange={setOrderId}
+          options={trip.stops.map((s) => ({
+            value: s.order_id,
+            label: `Stop ${s.seq} · ${s.outlet_name}`,
+            hint: `${s.order_id} · ${s.units} units · ${s.temp_requirement}`,
+          }))}
+        />
+        <Select
+          label="Problem"
+          value={category}
+          onChange={setCategory}
+          options={[
+            "Missing items",
+            "Damaged goods",
+            "Temperature concern",
+            "Does not fit vehicle",
+          ]}
+        />
+        <NumberField
+          label="Units affected"
+          value={units}
+          onChange={setUnits}
+          min={1}
+          max={5000}
+          required
+        />
         <label className="field">
           What happened?
           <textarea

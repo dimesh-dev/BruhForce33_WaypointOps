@@ -1,4 +1,5 @@
 "use client";
+import { Select } from "@/lib/client/controls";
 import { useMemo, useState } from "react";
 import { BarChart3, Snowflake } from "lucide-react";
 import { useApi } from "@/lib/client/api";
@@ -60,14 +61,13 @@ export function CapacityPage({ runDate }: { runDate: string }) {
           <b>{fleet?.reefers ?? "—"}</b> reefers available ·{" "}
           {fleet?.vehicles ?? "—"} vehicles
         </span>
-        <select
-          aria-label="Depot"
+        <Select
+          compact
+          ariaLabel="Depot"
           value={depot}
-          onChange={(e) => setDepot(e.target.value)}
-        >
-          <option>Peliyagoda</option>
-          <option>Kandy</option>
-        </select>
+          onChange={setDepot}
+          options={["Peliyagoda", "Kandy"]}
+        />
       </div>
       <section className="panel">
         <div className="panel-header">
