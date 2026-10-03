@@ -1,0 +1,21 @@
+{
+  "name": "Waypoint Delivery Network",
+  "short_name": "Waypoint",
+  "description": "Intelligent Delivery Planning & Multi-Role Logistics System for Waypoint Group",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbf8f2",
+  "theme_color": "#d97706",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

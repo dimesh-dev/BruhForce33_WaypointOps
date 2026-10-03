@@ -56,6 +56,9 @@ export interface Persona {
   full: string;
   initials: string;
   title: string;
+  email?: string;
+  alias?: string;
+  seededEmail?: string;
 }
 export interface ModalState {
   type: string;

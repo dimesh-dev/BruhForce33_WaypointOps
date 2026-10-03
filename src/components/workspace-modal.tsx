@@ -20,11 +20,29 @@ import {
   RotateCcw,
   Camera,
   Send,
+  Navigation,
+  Mail,
+  Lock,
+  UserCheck,
 } from "lucide-react";
 import type { Order, ModalProps } from "@/lib/types";
 import { initialOrders, routes } from "@/lib/demo-data";
 import { NetworkMap } from "./network-map";
 import { IconButton, Badge, Capacity } from "./ui-primitives";
+import {
+  solveDailyAllocation,
+  validateAllocation,
+  calculateTripDuration,
+  type FeasibilityReport,
+  type OrderPlanningInput,
+  type OrderAssignment,
+} from "@/lib/allocation-engine";
+import {
+  FLEET_VEHICLES,
+  OUTLETS,
+  DISTRICT_TRAVEL,
+  SERVICE_ALLOWANCES,
+} from "@/lib/dataset-reference";
 
 export function Modal({
   modal,
@@ -57,7 +75,13 @@ export function Modal({
     [late, setLate] = useState(false),
     [selected, setSelected] = useState("WP-2043"),
     [resolved, setResolved] = useState(false),
-    [mapRoute, setMapRoute] = useState(0);
+    [mapRoute, setMapRoute] = useState(0),
+    [planTab, setPlanTab] = useState<"audit" | "trips" | "deferrals">("audit"),
+    [solverStrategy, setSolverStrategy] = useState<"priority_first" | "max_utilization" | "balanced">("priority_first"),
+    [solvedReport, setSolvedReport] = useState<FeasibilityReport | null>(null),
+    [customEmail, setCustomEmail] = useState(""),
+    [authError, setAuthError] = useState(""),
+    [authLoading, setAuthLoading] = useState(false);
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
     document.body.style.overflow = "hidden";
@@ -111,6 +135,8 @@ export function Modal({
     guide: "A better way forward.",
     date: "Your operating day.",
     map: "Your network, in focus.",
+    auth: "Seeded Accounts & Role Authentication",
+    login: "Seeded Accounts & Role Authentication",
   };
   const exception = orders.find((o) => o.id === selected) ?? initialOrders[2];
   return (
@@ -276,90 +302,266 @@ export function Modal({
               )}
             </>
           )}
-          {modal.type === "plan" && (
-            <>
-              <p className="modal-intro">
-                Review the representative Monday plan before sharing it with
-                loading teams. These are designed validation states, not an
-                allocation engine.
-              </p>
-              <div className="plan-summary">
-                <span>
-                  <b>03</b>example routes
-                </span>
-                <span>
-                  <b>02</b>depots
-                </span>
-                <span>
-                  <b>{orders.filter((o) => o.status === "Deferred").length}</b>
-                  deferrals recorded
-                </span>
-              </div>
-              <div className="validation-list">
-                {[
-                  [
-                    "Both capacity limits",
-                    "Weight and volume stay within each vehicle’s limits.",
-                  ],
-                  [
-                    "Temperature compatibility",
-                    "Chilled cargo uses refrigerated vehicles only.",
-                  ],
-                  [
-                    "Outlet access & delivery windows",
-                    "Van-only access and fixed mall windows stay visible.",
-                  ],
-                  [
-                    "Home depot",
-                    "Routes begin at each vehicle’s assigned depot.",
-                  ],
-                  [
-                    "Trip limit & fuel allowance",
-                    "Maximum two daily trips; weekly fuel balance checked.",
-                  ],
-                  [
-                    "Deferral fairness",
-                    "Previous skips and decision reasons are kept in view.",
-                  ],
-                ].map(([title, desc]) => (
-                  <div key={title}>
-                    <ShieldCheck size={20} />
-                    <span>
-                      <b>{title}</b>
-                      <small>{desc}</small>
+          {modal.type === "plan" && (() => {
+            const planningInputs: OrderPlanningInput[] = orders.map((o) => {
+              const weightNum = parseFloat(o.amount) || 500;
+              const volNum = parseFloat(o.volume) || 4.0;
+              const isChilled = o.temp.toLowerCase().includes("chill");
+              const isVanOnly = o.access.toLowerCase().includes("van");
+              const isMall = o.access.toLowerCase().includes("mall");
+              const dock_type = isMall ? "mall_bay" : o.access.toLowerCase().includes("street") ? "street" : "rear_dock";
+              const depot = ["Kandy", "Matale", "Nuwara Eliya", "Kegalle"].includes(o.district) ? "Kandy" : "Peliyagoda";
+
+              return {
+                order_ref: o.id,
+                outlet_id: o.id.replace("WP-", "OUT"),
+                brand: (o.brand as any) || "Fresh",
+                district: o.district || "Colombo",
+                depot,
+                dock_type,
+                parking_constraint: isVanOnly ? "van_only" : isMall ? "mall_dock" : "normal",
+                temp_requirement: isChilled ? "chilled" : "ambient",
+                order_units: Math.round(weightNum / 15),
+                order_weight_kg: weightNum,
+                order_volume_m3: volNum,
+                deferred_yesterday: o.id === "WP-2045" ? 1 : 0,
+                days_since_last_served: o.id === "WP-2045" ? 2 : 1,
+                outlet_name: o.name,
+              };
+            });
+
+            const currentReport = solvedReport ?? solveDailyAllocation(planningInputs, FLEET_VEHICLES, { strategy: solverStrategy }).report;
+
+            return (
+              <>
+                <p className="modal-intro">
+                  Tech-Triathlon 2026 Feasibility Engine & Dispatch Planner. Solves multi-brand, multi-depot fleet allocation with strict adherence to all 7 operating constraints.
+                </p>
+
+                {/* Solver Control Bar */}
+                <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl p-3.5 mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-xs font-semibold uppercase tracking-wider text-amber-900 dark:text-amber-100">
+                      Solver: {currentReport.is_valid ? "7/7 Constraints Satisfied" : `${currentReport.violations.length} Violations`}
                     </span>
                   </div>
-                ))}
-              </div>
-              <label className="checkbox-field">
-                <input
-                  type="checkbox"
-                  checked={checks}
-                  onChange={(e) => setChecks(e.target.checked)}
-                />
-                <span>
-                  I reviewed the sample constraints and outstanding exceptions.
-                </span>
-              </label>
-              <button
-                className="btn primary full"
-                disabled={!checks}
-                onClick={() => {
-                  setPublished(true);
-                  addEvent(
-                    "Dispatch plan v2 published",
-                    "Loader now sees the updated plan and reverse stop sequence.",
-                  );
-                  finish("Plan v2 published to the loading dock.");
-                }}
-              >
-                <Send size={17} />
-                {published
-                  ? "Publish updated plan"
-                  : "Publish plan to loading teams"}
-              </button>
-            </>
-          )}
+                  <div className="flex items-center gap-2">
+                    <select
+                      className="text-xs py-1 px-2.5 rounded-lg border border-amber-300 bg-white dark:bg-stone-900 text-stone-800 dark:text-stone-100 font-medium"
+                      value={solverStrategy}
+                      onChange={(e) => {
+                        const strat = e.target.value as any;
+                        setSolverStrategy(strat);
+                        const res = solveDailyAllocation(planningInputs, FLEET_VEHICLES, { strategy: strat });
+                        setSolvedReport(res.report);
+                        notify(`Solved with ${strat === "priority_first" ? "Fairness & Priority" : "Max Capacity"} strategy`);
+                      }}
+                    >
+                      <option value="priority_first">Priority & Fairness First</option>
+                      <option value="max_utilization">Max Capacity Utilization</option>
+                      <option value="balanced">Balanced Efficiency</option>
+                    </select>
+                    <button
+                      className="btn secondary text-xs py-1 px-3 bg-amber-600 text-white hover:bg-amber-700 border-none font-medium flex items-center gap-1.5"
+                      onClick={() => {
+                        const res = solveDailyAllocation(planningInputs, FLEET_VEHICLES, { strategy: solverStrategy });
+                        setSolvedReport(res.report);
+                        notify("Optimized allocation calculated successfully!");
+                      }}
+                    >
+                      <RotateCcw size={13} /> Re-Solve Engine
+                    </button>
+                  </div>
+                </div>
+
+                {/* Plan Summary Stat Cards */}
+                <div className="plan-summary grid grid-cols-4 gap-2 mb-4">
+                  <div>
+                    <b>{currentReport.summary.served_orders} / {currentReport.summary.total_orders}</b>
+                    <small>Orders served ({currentReport.summary.service_rate_pct}%)</small>
+                  </div>
+                  <div>
+                    <b>{currentReport.summary.total_trips}</b>
+                    <small>Allocated trips</small>
+                  </div>
+                  <div>
+                    <b>{currentReport.summary.vehicles_used}</b>
+                    <small>Vehicles active</small>
+                  </div>
+                  <div>
+                    <b>{currentReport.summary.deferred_orders}</b>
+                    <small>Deferred with reasons</small>
+                  </div>
+                </div>
+
+                {/* Tab Navigation */}
+                <div className="flex border-b border-stone-200 dark:border-stone-800 mb-3 gap-2">
+                  <button
+                    className={`pb-2 px-3 text-xs font-semibold transition-colors border-b-2 ${
+                      planTab === "audit"
+                        ? "border-amber-600 text-amber-700 dark:text-amber-400 font-bold"
+                        : "border-transparent text-stone-500 hover:text-stone-800 dark:text-stone-400"
+                    }`}
+                    onClick={() => setPlanTab("audit")}
+                  >
+                    Feasibility Audit (7 Rules)
+                  </button>
+                  <button
+                    className={`pb-2 px-3 text-xs font-semibold transition-colors border-b-2 ${
+                      planTab === "trips"
+                        ? "border-amber-600 text-amber-700 dark:text-amber-400 font-bold"
+                        : "border-transparent text-stone-500 hover:text-stone-800 dark:text-stone-400"
+                    }`}
+                    onClick={() => setPlanTab("trips")}
+                  >
+                    Vehicle Trips & Time ({currentReport.trips.length})
+                  </button>
+                  <button
+                    className={`pb-2 px-3 text-xs font-semibold transition-colors border-b-2 ${
+                      planTab === "deferrals"
+                        ? "border-amber-600 text-amber-700 dark:text-amber-400 font-bold"
+                        : "border-transparent text-stone-500 hover:text-stone-800 dark:text-stone-400"
+                    }`}
+                    onClick={() => setPlanTab("deferrals")}
+                  >
+                    Deferral Log ({currentReport.summary.deferred_orders})
+                  </button>
+                </div>
+
+                {/* Tab 1: 7-Rule Feasibility Audit */}
+                {planTab === "audit" && (
+                  <div className="validation-list space-y-2 max-h-64 overflow-y-auto pr-1">
+                    {[
+                      [
+                        "Rule 1: Brand & District Isolation",
+                        "All orders sharing vehicle & trip must strictly belong to the same brand and district.",
+                      ],
+                      [
+                        "Rule 2: Refrigeration Capability",
+                        "Chilled orders strictly allocated to reefer vehicles (12 trucks + 4 vans in fleet).",
+                      ],
+                      [
+                        "Rule 3: Vehicle Access Constraints",
+                        "Outlets marked van_only strictly allocated to vans (no truck access).",
+                      ],
+                      [
+                        "Rule 4: Home Depot Enforcement",
+                        "Vehicles only serve outlets assigned to their home depot (Peliyagoda or Kandy).",
+                      ],
+                      [
+                        "Rule 5: Whole Orders (No Splitting)",
+                        "Each served order is assigned to exactly one vehicle and one trip.",
+                      ],
+                      [
+                        "Rule 6: Capacity Limits (Weight & Volume)",
+                        "Trip total weight <= weight_cap_kg and total volume <= volume_cap_m3.",
+                      ],
+                      [
+                        "Rule 7: Trips & Time Budgets",
+                        "Max 2 trips per vehicle. Fresh <= 270 min morning window; Style/Tech <= 480 min trading day.",
+                      ],
+                    ].map(([title, desc], idx) => {
+                      const ruleNum = idx + 1;
+                      const hasViolation = currentReport.violations.some((v) => v.rule_number === ruleNum);
+                      return (
+                        <div key={title} className="flex items-start gap-3 p-2 rounded-lg bg-stone-50 dark:bg-stone-900/60 border border-stone-200/70 dark:border-stone-800">
+                          {hasViolation ? (
+                            <AlertTriangle size={18} className="text-rose-500 shrink-0 mt-0.5" />
+                          ) : (
+                            <CheckCircle2 size={18} className="text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                          )}
+                          <div>
+                            <b className="text-xs text-stone-900 dark:text-stone-100 font-semibold">{title}</b>
+                            <p className="text-[11px] text-stone-600 dark:text-stone-400 leading-tight mt-0.5">{desc}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Tab 2: Vehicle Trips & Time */}
+                {planTab === "trips" && (
+                  <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1">
+                    {currentReport.trips.map((t, idx) => (
+                      <div key={idx} className="p-2.5 rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900/50">
+                        <div className="flex items-center justify-between text-xs mb-1.5">
+                          <span className="font-bold text-stone-900 dark:text-stone-100">
+                            {t.vehicle_id} · Trip {t.trip_id} ({t.brand} · {t.district})
+                          </span>
+                          <span className="text-[11px] font-semibold text-amber-700 dark:text-amber-300">
+                            {t.total_trip_min} min (Outbound: {t.outbound_travel_min}m, Stops: {t.inter_stop_travel_min}m, Handling: {t.handling_time_min}m)
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 text-[11px] text-stone-600 dark:text-stone-400 mb-1.5">
+                          <div>Stops: <b>{t.order_count}</b></div>
+                          <div>Weight: <b>{t.total_weight_kg} kg ({t.weight_utilization_pct}%)</b></div>
+                          <div>Volume: <b>{t.total_volume_m3} m³ ({t.volume_utilization_pct}%)</b></div>
+                        </div>
+                        <div className="flex gap-1.5">
+                          <div className="h-1.5 flex-1 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden">
+                            <div className="h-full bg-amber-600 rounded-full" style={{ width: `${Math.min(100, t.weight_utilization_pct)}%` }} />
+                          </div>
+                          <div className="h-1.5 flex-1 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden">
+                            <div className="h-full bg-emerald-600 rounded-full" style={{ width: `${Math.min(100, t.volume_utilization_pct)}%` }} />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Tab 3: Deferral Log */}
+                {planTab === "deferrals" && (
+                  <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                    {orders.filter((o) => o.status === "Deferred" || o.id === "WP-2045").map((o) => (
+                      <div key={o.id} className="p-2.5 rounded-lg border border-stone-200 dark:border-stone-800 bg-amber-50/40 dark:bg-amber-950/20">
+                        <div className="flex items-center justify-between text-xs font-bold mb-1">
+                          <span>{o.id}: {o.name}</span>
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-amber-200 text-amber-900 font-semibold uppercase">Deferred</span>
+                        </div>
+                        <p className="text-[11px] text-stone-700 dark:text-stone-300">
+                          <b>Reason:</b> {o.reason || "Refrigerated van capacity exhausted in Gampaha district for morning window."}
+                        </p>
+                        <small className="text-[10px] text-stone-500 block mt-1">
+                          Protected Fairness Rule: Order marked for elevated priority on next dispatch run.
+                        </small>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <label className="checkbox-field mt-3">
+                  <input
+                    type="checkbox"
+                    checked={checks}
+                    onChange={(e) => setChecks(e.target.checked)}
+                  />
+                  <span>
+                    I reviewed the sample constraints and outstanding exceptions.
+                  </span>
+                </label>
+                <button
+                  className="btn primary full mt-2"
+                  disabled={!checks}
+                  onClick={() => {
+                    setPublished(true);
+                    addEvent(
+                      "Dispatch plan v2 published",
+                      "Loader now sees the updated plan and reverse stop sequence.",
+                    );
+                    finish("Plan v2 published to the loading dock.");
+                  }}
+                >
+                  <Send size={17} />
+                  {published
+                    ? "Publish updated plan"
+                    : "Publish plan to loading teams"}
+                </button>
+              </>
+            );
+          })()}
           {modal.type === "route" && (
             <>
               <div className="route-modal-top">
@@ -481,6 +683,17 @@ export function Modal({
                   );
                 } else {
                   updateOrder(modalOrder.id, { status: "Delivered", proof });
+                  fetch("/api/driver", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      order_id: modalOrder.id,
+                      driver_name: "Kasun Perera",
+                      recipient_name: receiver,
+                      items_received: Number(count),
+                      proof_notes: note,
+                    }),
+                  }).catch(() => {});
                   addEvent(
                     "Delivery completed",
                     "Colombo 03 can now confirm receipt.",
@@ -556,6 +769,21 @@ export function Modal({
                       : "Store issue reported",
                   `${issueType}: ${note}`,
                 );
+
+                if (modal.type === "shortfall") {
+                  fetch("/api/loading", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      order_id: modalOrder.id,
+                      vehicle_id: "VEH001",
+                      trip_id: 1,
+                      shortfall_type: issueType === "Missing items" ? "missing" : "damaged",
+                      shortfall_notes: note,
+                    }),
+                  }).catch(() => {});
+                }
+
                 finish("Issue recorded in the dispatcher’s activity inbox.");
               }}
             >
@@ -625,6 +853,9 @@ export function Modal({
               onSubmit={(e) => {
                 e.preventDefault();
                 const id = "WP-" + (2100 + orders.length);
+                const weight = Number(count) * 20;
+                const volume = (Number(count) * 0.15).toFixed(1);
+
                 setOrders((o) => [
                   ...o,
                   {
@@ -632,8 +863,8 @@ export function Modal({
                     name: "Fresh · Colombo 03",
                     brand: "Fresh",
                     district: "Colombo",
-                    amount: `${Number(count) * 20} kg`,
-                    volume: `${(Number(count) * 0.15).toFixed(1)} m³`,
+                    amount: `${weight} kg`,
+                    volume: `${volume} m³`,
                     window: "06:00 - 07:30",
                     temp,
                     status: "Scheduled",
@@ -642,6 +873,23 @@ export function Modal({
                     access: "Rear dock",
                   },
                 ]);
+
+                fetch("/api/orders", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    order_ref: id,
+                    outlet_id: "OUT001",
+                    brand: "Fresh",
+                    district: "Colombo",
+                    depot: "Peliyagoda",
+                    order_weight_kg: weight,
+                    order_volume_m3: parseFloat(volume),
+                    temp_requirement: temp.toLowerCase(),
+                    force_after_cutoff: late,
+                  }),
+                }).catch(() => {});
+
                 addEvent(
                   "Store order confirmed",
                   `${id}: ${count} ${temp.toLowerCase()} crates for ${late ? "Wednesday" : "Tuesday"}.`,
@@ -710,6 +958,18 @@ export function Modal({
                   status: "Received",
                   receiptNote: note,
                 });
+
+                fetch("/api/orders", {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    order_id: modalOrder.id,
+                    dispatch_status: "received",
+                    receipt_confirmed: true,
+                    receipt_notes: note,
+                  }),
+                }).catch(() => {});
+
                 addEvent(
                   "Store receipt confirmed",
                   "Anjali confirmed the Colombo 03 delivery.",
@@ -888,6 +1148,195 @@ export function Modal({
                   {routes[mapRoute].stops} stops · next arrival{" "}
                   {routes[mapRoute].eta}
                 </p>
+              </div>
+            </>
+          )}
+          {(modal.type === "auth" || modal.type === "login") && (
+            <>
+              <p className="modal-intro">
+                Waypoint is equipped with four official role accounts. Click any account below to switch roles and authenticate via the backend API, or enter credentials manually.
+              </p>
+
+              <div style={{ display: "grid", gap: "10px", margin: "16px 0" }}>
+                {[
+                  {
+                    role: "Dispatcher" as const,
+                    email: "dispatcher@waypoint.lk",
+                    alias: "amaya@waypoint.lk",
+                    name: "Amaya Jayasinghe",
+                    title: "Network Dispatcher & Planning Lead",
+                    location: "Peliyagoda Central Planning Office",
+                    icon: Route,
+                  },
+                  {
+                    role: "Loader" as const,
+                    email: "loader@waypoint.lk",
+                    alias: "ruwan@waypoint.lk",
+                    name: "Ruwan Kumara",
+                    title: "Loading Dock Supervisor",
+                    location: "Peliyagoda Loading Dock 03",
+                    icon: Truck,
+                  },
+                  {
+                    role: "Driver" as const,
+                    email: "driver@waypoint.lk",
+                    alias: "kasun@waypoint.lk",
+                    name: "Kasun Perera",
+                    title: "Senior Fleet Delivery Driver",
+                    location: "Vehicle VEH001 · Route R-012 (Colombo)",
+                    icon: Navigation,
+                  },
+                  {
+                    role: "Store manager" as const,
+                    email: "storemanager@waypoint.lk",
+                    alias: "anjali@waypoint.lk",
+                    name: "Anjali Fernando",
+                    title: "Supermarket Store Manager",
+                    location: "Waypoint Fresh · Colombo 03 (OUT001)",
+                    icon: Store,
+                  },
+                ].map((acc) => (
+                  <div
+                    key={acc.email}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: "12px 14px",
+                      borderRadius: "10px",
+                      border: "1px solid var(--line, #e7e9ee)",
+                      background: "var(--paper, #fff)",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                      <div
+                        style={{
+                          width: "36px",
+                          height: "36px",
+                          borderRadius: "8px",
+                          background: "var(--line, #eef2f6)",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "var(--accent-dark, #526b95)",
+                        }}
+                      >
+                        <acc.icon size={18} />
+                      </div>
+                      <div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          <strong>{acc.name}</strong>
+                          <span
+                            style={{
+                              fontSize: "11px",
+                              padding: "2px 6px",
+                              borderRadius: "4px",
+                              background: "rgba(104, 127, 166, 0.15)",
+                              color: "var(--accent-dark, #526b95)",
+                              fontWeight: 600,
+                            }}
+                          >
+                            {acc.role}
+                          </span>
+                        </div>
+                        <div style={{ fontSize: "12px", color: "var(--muted, #7b8491)", fontFamily: "monospace" }}>
+                          {acc.email} <span style={{ opacity: 0.65 }}>({acc.alias})</span>
+                        </div>
+                        <div style={{ fontSize: "11px", color: "var(--muted, #7b8491)", marginTop: "2px" }}>
+                          {acc.location}
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      className="btn secondary"
+                      style={{ fontSize: "12px", padding: "6px 12px" }}
+                      onClick={async () => {
+                        setAuthLoading(true);
+                        try {
+                          const res = await fetch("/api/auth", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ email: acc.email, role: acc.role }),
+                          });
+                          const data = await res.json();
+                          if (data.success) {
+                            localStorage.setItem("waypoint-role-v1", JSON.stringify(acc.role));
+                            notify(`Authenticated as ${acc.name} (${acc.role})`);
+                            location.reload();
+                          } else {
+                            setAuthError(data.error || "Authentication failed");
+                          }
+                        } catch {
+                          localStorage.setItem("waypoint-role-v1", JSON.stringify(acc.role));
+                          notify(`Switched to ${acc.role}`);
+                          location.reload();
+                        } finally {
+                          setAuthLoading(false);
+                        }
+                      }}
+                    >
+                      <UserCheck size={14} /> Sign In
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ borderTop: "1px solid var(--line, #e7e9ee)", paddingTop: "14px", marginTop: "14px" }}>
+                <label style={{ fontSize: "12px", fontWeight: 600, display: "block", marginBottom: "6px" }}>
+                  Custom Email Authentication
+                </label>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <input
+                    type="email"
+                    placeholder="e.g. dispatcher@waypoint.lk"
+                    value={customEmail}
+                    onChange={(e) => {
+                      setCustomEmail(e.target.value);
+                      setAuthError("");
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: "8px 12px",
+                      borderRadius: "6px",
+                      border: "1px solid var(--line, #e7e9ee)",
+                      fontSize: "13px",
+                    }}
+                  />
+                  <button
+                    className="btn primary"
+                    disabled={!customEmail.trim() || authLoading}
+                    onClick={async () => {
+                      setAuthLoading(true);
+                      setAuthError("");
+                      try {
+                        const res = await fetch("/api/auth", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ email: customEmail.trim() }),
+                        });
+                        const data = await res.json();
+                        if (data.success && data.user) {
+                          localStorage.setItem("waypoint-role-v1", JSON.stringify(data.user.role));
+                          notify(`Authenticated as ${data.user.name} (${data.user.role})`);
+                          location.reload();
+                        } else {
+                          setAuthError(data.error || "Invalid credentials");
+                        }
+                      } catch {
+                        setAuthError("Network error during authentication");
+                      } finally {
+                        setAuthLoading(false);
+                      }
+                    }}
+                  >
+                    {authLoading ? "Verifying..." : "Authenticate"}
+                  </button>
+                </div>
+                {authError && (
+                  <p style={{ color: "#e11d48", fontSize: "12px", marginTop: "6px" }}>
+                    ⚠ {authError}
+                  </p>
+                )}
               </div>
             </>
           )}

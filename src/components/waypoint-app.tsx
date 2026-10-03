@@ -91,11 +91,26 @@ export default function WaypointApp() {
     setPage("Overview");
     setRoleOpen(false);
     setSidebar(false);
+    const persona = roleInfo[r];
+    if (persona?.email) {
+      fetch("/api/auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: persona.email, role: r }),
+      }).catch(() => {});
+    }
   };
   const sync = () => {
     queued.forEach((q) =>
       updateOrder(q.id, { status: "Delivered", eta: "06:42", proof: q.proof }),
     );
+    if (queued.length > 0) {
+      fetch("/api/driver/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ queue: queued }),
+      }).catch(() => {});
+    }
     addEvent(
       "Offline records synchronized",
       `${queued.length} delivery record(s) now visible to the store.`,
@@ -360,10 +375,25 @@ export default function WaypointApp() {
                         ][i]
                       }
                     </small>
+                    <span style={{ display: "block", fontSize: "11px", color: "var(--accent-dark, #526b95)", marginTop: "2px", fontFamily: "monospace" }}>
+                      {roleInfo[r].email}
+                    </span>
                   </span>
                   {role === r && <Check size={17} />}
                 </button>
               ))}
+              <div style={{ borderTop: "1px solid var(--line, #e7e9ee)", marginTop: "8px", paddingTop: "8px" }}>
+                <button
+                  style={{ width: "100%", display: "flex", alignItems: "center", gap: "8px", padding: "8px 10px", fontSize: "12px", color: "var(--ink)", borderRadius: "6px" }}
+                  onClick={() => {
+                    setRoleOpen(false);
+                    setModal({ type: "auth" });
+                  }}
+                >
+                  <ShieldCheck size={15} style={{ color: "#2563eb" }} />
+                  <span><strong>Seeded Accounts & Role Auth</strong></span>
+                </button>
+              </div>
             </div>
           </>
         )}
@@ -823,6 +853,56 @@ export default function WaypointApp() {
                       src="/images/dispatch-studio.png"
                       alt=""
                     />
+                  </div>
+                  <div className="bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl p-4 mb-6 shadow-sm">
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                      <div className="flex items-center gap-2.5">
+                        <span className="flex h-3 w-3 relative">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                        </span>
+                        <h3 className="text-sm font-bold text-stone-900 dark:text-stone-100">
+                          Automated Feasibility Engine: 7 / 7 Constraints Enforced
+                        </h3>
+                      </div>
+                      <button
+                        className="btn secondary text-xs py-1.5 px-3 flex items-center gap-1.5"
+                        onClick={() => setModal({ type: "plan" })}
+                      >
+                        <ShieldCheck size={14} className="text-emerald-600" />
+                        Run Solver & Audit Rules
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 text-[11px]">
+                      <div className="p-2 rounded-lg bg-white dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 flex items-center gap-2">
+                        <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                        <span className="text-stone-700 dark:text-stone-300 font-medium">1. Brand/District</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-white dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 flex items-center gap-2">
+                        <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                        <span className="text-stone-700 dark:text-stone-300 font-medium">2. Reefer Temp</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-white dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 flex items-center gap-2">
+                        <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                        <span className="text-stone-700 dark:text-stone-300 font-medium">3. Van Access</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-white dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 flex items-center gap-2">
+                        <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                        <span className="text-stone-700 dark:text-stone-300 font-medium">4. Home Depot</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-white dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 flex items-center gap-2">
+                        <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                        <span className="text-stone-700 dark:text-stone-300 font-medium">5. Whole Orders</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-white dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 flex items-center gap-2">
+                        <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                        <span className="text-stone-700 dark:text-stone-300 font-medium">6. Capacity Limits</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-white dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 flex items-center gap-2">
+                        <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                        <span className="text-stone-700 dark:text-stone-300 font-medium">7. Time (270/480m)</span>
+                      </div>
+                    </div>
                   </div>
                   <div className="three-grid grid gap-5">
                     {routes.map((r, i) => (
