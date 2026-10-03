@@ -32,6 +32,13 @@ npm run db:setup      # schema + seed (npm run db:reset to start over)
 npm run dev           # http://localhost:3000
 ```
 
+### Deploy on Vercel
+
+1. Add a PostgreSQL database: Vercel project → **Storage** → **Create / Connect Database** → **Neon** (Postgres). Connect it to the project; Vercel adds `DATABASE_URL`.
+2. Project → **Settings → Environment Variables** (Production): `SESSION_SECRET` (long random string, e.g. `openssl rand -hex 32`), `COOKIE_SECURE=true`, `DB_POOL_MAX=3`, and optionally `DEMO_PASSWORD`, `DEMO_RUN_DATE`, `DEMO_START`, `ALLOW_RESET`, `SHOW_DEMO_ACCOUNTS`.
+3. Seed the database once from your machine with the same connection string: `DATABASE_URL='<neon url>' npm run db:setup`. (Vercel does not run the Docker start command.)
+4. Redeploy. Check `https://<your-app>.vercel.app/api/health` returns `"seeded_at"`, then sign in as `dispatcher`. **Reset demo** reseeds the database from the deployed app.
+
 ## Seeded accounts
 
 All accounts use the password **`waypoint2026`** (`DEMO_PASSWORD`). The sign-in page also offers one-click buttons for the four walkthrough accounts.
