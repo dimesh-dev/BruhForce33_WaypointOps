@@ -131,6 +131,15 @@ export function WaypointApp({ user }: { user: User }) {
         {sidebar && (
           <div className="sidebar-scrim" onClick={() => setSidebar(false)} />
         )}
+        <button
+          className="sidebar-toggle"
+          onClick={toggleSidebar}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-expanded={!collapsed}
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
+        </button>
         <aside
           className={`sidebar ${sidebar ? "open" : ""}`}
           aria-label="Workspace navigation"
@@ -141,19 +150,6 @@ export function WaypointApp({ user }: { user: User }) {
             </span>
             waypoint<span className="wordmark-dot">®</span>
           </a>
-          <button
-            className="sidebar-toggle"
-            onClick={toggleSidebar}
-            aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-            aria-expanded={!collapsed}
-            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {collapsed ? (
-              <ChevronRight size={15} />
-            ) : (
-              <ChevronLeft size={15} />
-            )}
-          </button>
           <div className="workspace">
             <span className="workspace-icon">
               <Box size={19} />

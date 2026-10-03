@@ -1418,10 +1418,10 @@ details[open] > summary::before {
 }
 /* Round handle sitting on the sidebar's right edge, same place expanded or collapsed. */
 .sidebar-toggle {
-  position: absolute;
+  position: fixed;
   top: 92px;
-  right: -13px;
-  z-index: 2;
+  left: 213px; /* sidebar width 226 - half the handle */
+  z-index: 60;
   width: 26px;
   height: 26px;
   display: grid;
@@ -1432,9 +1432,14 @@ details[open] > summary::before {
   color: #b4bdcd;
   cursor: pointer;
   box-shadow: 0 2px 8px #0000002e;
-  transition: color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    background 0.15s;
 }
-.sidebar-toggle:hover { color: #fff; background: #2f3b4d; }
+.sidebar-toggle:hover {
+  color: #fff;
+  background: #2f3b4d;
+}
 /* Profile row: avatar, name, then a sign-out icon button on the same line. */
 .profile > span:nth-child(2) {
   flex: 1;
@@ -1487,12 +1492,11 @@ details[open] > summary::before {
   .sidebar-collapsed .profile > span:nth-child(2) {
     display: none;
   }
-  .sidebar-collapsed .sidebar-toggle {
-    position: static;
-    margin: 22px auto 0;
-  }
   .sidebar-collapsed .sidebar nav {
-    margin-top: 18px;
+    margin-top: 40px;
+  }
+  .sidebar-collapsed .sidebar-toggle {
+    left: 63px;
   }
   .sidebar-collapsed .nav-item {
     justify-content: center;
@@ -1522,4 +1526,10 @@ details[open] > summary::before {
   .sidebar.open .profile {
     flex-direction: row;
   }
+}
+.sidebar-toggle {
+  transition:
+    left 0.2s ease,
+    color 0.15s,
+    background 0.15s;
 }

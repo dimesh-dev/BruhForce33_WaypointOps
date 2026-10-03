@@ -220,7 +220,7 @@ test("roles cannot reach each other's actions", async ({ browser }) => {
   const driver = await session(browser, "driver");
   expect(
     (
-      await driver.api.post("/api/plans", { data: { run_date: "2026-10-06" } })
+      await driver.api.post("/api/plans", { data: { run_date: "2026-04-07" } })
     ).status(),
   ).toBe(403);
   const store = await session(browser, "store");

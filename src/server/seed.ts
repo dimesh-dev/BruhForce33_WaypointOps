@@ -17,10 +17,10 @@ import { demandFactor } from "./forecast.ts";
  * district_travel.csv, service_allowance.csv. If deliveries_train.csv is also
  * present it seeds demand history for the capacity forecast.
  *
- * The scenario: dispatch day DEMO_RUN_DATE (default Tue 6 Oct 2026) at
+ * The scenario: dispatch day DEMO_RUN_DATE (default Tue 7 Apr 2026, six days before Sinhala and Tamil New Year) at
  * Peliyagoda and Kandy, with orders from every outlet scheduled to receive one,
  * three orders carried over from Monday's run, Monday's fuel already drawn,
- * and four Peliyagoda vehicles in the workshop. Demand exceeds refrigerated
+ * and three Peliyagoda vehicles in the workshop. Demand exceeds refrigerated
  * capacity, so the plan must defer.
  */
 
@@ -28,8 +28,8 @@ import { demandFactor } from "./forecast.ts";
 const DATA_DIR =
   process.env.DATA_DIR ??
   join(/* turbopackIgnore: true */ process.cwd(), "data");
-const RUN_DATE = process.env.DEMO_RUN_DATE ?? "2026-10-06";
-const DEMO_START = process.env.DEMO_START ?? "2026-10-05T14:30:00+05:30";
+const RUN_DATE = process.env.DEMO_RUN_DATE ?? "2026-04-07";
+const DEMO_START = process.env.DEMO_START ?? "2026-04-06T14:30:00+05:30";
 const PASSWORD = process.env.DEMO_PASSWORD ?? "waypoint2026";
 
 export async function migrate(db: pg.Pool | pg.PoolClient = pool()) {
@@ -322,9 +322,9 @@ async function seedScenario(c: pg.PoolClient) {
     .find((d) => d.date < RUN_DATE && d.is_operating === 1)!;
   state = 4207;
 
-  // Vehicles in the workshop for the scenario day: three Peliyagoda reefer trucks and one dry truck.
+  // Vehicles in the workshop for the scenario day: two Peliyagoda reefer trucks and one dry truck.
   const workshop = await c.query<{ vehicle_id: string }>(
-    `(SELECT vehicle_id FROM vehicles WHERE depot='Peliyagoda' AND temp='reefer' AND type='truck' ORDER BY vehicle_id DESC LIMIT 3)
+    `(SELECT vehicle_id FROM vehicles WHERE depot='Peliyagoda' AND temp='reefer' AND type='truck' ORDER BY vehicle_id DESC LIMIT 2)
      UNION ALL
      (SELECT vehicle_id FROM vehicles WHERE depot='Peliyagoda' AND temp='ambient' AND type='truck' ORDER BY vehicle_id DESC LIMIT 1)`,
   );
