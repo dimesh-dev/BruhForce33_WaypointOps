@@ -1,30 +1,40 @@
 # AI tool disclosure · Hackathon phase
 
-> **Team: review and complete the bracketed parts before submitting.** This file must describe what your team actually did; edit anything that is not accurate.
+Waypoint is a team-directed project developed with AI assistance. The team directed and approved the Designathon personas, workflows, failure scenarios and visual system that form the basis of this build. During the Hackathon phase, AI tools supported implementation, testing and documentation against the challenge brief and that existing design.
+
+AI assistance was substantial, including code generation. The team remains responsible for the submitted solution, its design choices and the accuracy of this disclosure.
+
+> **Before submission:** complete the bracketed review details below so this disclosure reflects the team's actual contributions and checks.
+
+## Team contribution and ownership
+
+- **Product and experience direction.** The team directed and approved the personas, role-based flows, failure scenarios and visual system during the Designathon. These decisions provided the foundation for the dispatcher, loader, driver and store-manager experiences.
+- **Project context and implementation brief.** The team supplied the challenge booklet and existing Designathon repository, and asked the tools to identify Hackathon requirement gaps and implement the missing functionality within that context.
+- **Continuity between design and implementation.** The Hackathon work builds on the team's approved design, carrying its workflows and visual language into the working application.
+- **Review and refinement.** [Add specific examples of team feedback, implementation decisions, changes made by team members and AI suggestions that were revised or rejected.]
+- **Acceptance and submission.** Final acceptance of the implementation and submission materials is the team's responsibility. [Record the manual checks completed by team members, including devices used and any remaining limitations.]
 
 ## Tools used
 
 | Tool | Used for |
 | --- | --- |
-| Claude Code (Anthropic, Claude Opus 5.5) | Gap analysis of the Designathon prototype against the Hackathon brief; design and implementation of the backend, database schema, planning engine, offline sync, role screens, tests, Docker setup and documentation in this repository. |
+| Claude Code (Anthropic, Claude Opus 5.5) | Assisted with requirement-gap analysis, architecture proposals and substantial code generation for the backend, database schema, planning engine, offline sync, role screens, tests, Docker setup and documentation, using the supplied brief and team-approved design. |
 | Google Antigravity / Gemini (per the earlier team disclosure) | An earlier backend iteration on `main` (JSON-file store, email-only sign-in, API routes, first allocation engine, IndexedDB helpers). Reviewed and superseded by this build; see below. |
-| Codex (OpenAI) | Designathon phase only: the original clickable prototype, design book and illustrations. |
+| Codex (OpenAI) | Assisted with the original Designathon clickable prototype, design book and illustrations; during the Hackathon, also helped organise commits, correct tooling paths and refine this disclosure. |
 | Built-in image generation | Designathon phase only: the pencil and watercolour illustrations reused in the app. |
 
-## AI-assisted work
+## Scope of AI assistance
 
-- **Architecture and code.** Claude Code proposed the architecture (single Next.js app with route handlers, PostgreSQL, pure planning engine, IndexedDB outbox with idempotent server reconciliation) and wrote the code under `src/server`, `src/lib/planning`, `src/lib/client`, `src/components/app`, `src/app/api`, `public/sw.js`, `scripts/db-setup.ts`, `scripts/generate-sample-data.mjs`, the `Dockerfile` and `docker-compose.yml`.
-- **Planning engine.** The constraint set was taken from the booklet (pages 5, 20-21); the greedy best-fit algorithm, priority policy and deferral diagnosis were written by the AI. An earlier iteration on `main` (allocation engine, JSON-file persistence, email-only sign-in, API routes) was reviewed against the brief and replaced: its engine did not check delivery windows or fuel quotas, the screens still ran on six illustrative orders in browser storage, sign-in had no password or session check, and `docker compose` had no database service. Its PWA manifest was kept.
-- **Stand-in data.** The official shared CSVs were not in the repository when this phase was built, so the AI generated schema-compatible stand-ins in `data/` (same filenames, columns and network totals as the brief). They are synthetic and clearly labelled; [replace them with the official files before submission].
-- **Tests and verification.** The engine unit tests and the end-to-end walkthrough test were AI-written. The AI ran type checks, the production build, both test suites, and visual checks of each role screen on desktop and phone sizes.
-- **Documentation.** README, architecture, data model and this disclosure were drafted by the AI.
+- **Architecture and implementation.** Working from the supplied brief and existing design, Claude Code proposed the architecture: a single Next.js app with route handlers, PostgreSQL, a pure planning engine and an IndexedDB outbox with idempotent server reconciliation. It generated substantial implementation code under `src/server`, `src/lib/planning`, `src/lib/client`, `src/components/app`, `src/app/api`, as well as `public/sw.js`, database and sample-data scripts, and Docker configuration.
+- **Planning engine.** The challenge booklet (pages 5, 20–21) supplied the constraints. AI assistance covered the greedy best-fit algorithm, priority policy and deferral diagnosis. Gap analysis of the earlier backend iteration informed its replacement with database persistence, password-based sessions, delivery-window and fuel checks, and dataset-backed screens. The earlier PWA manifest was retained.
+- **Development data.** AI generated schema-compatible stand-in CSVs because the official shared files were not available in the repository during implementation. These files are synthetic, with filenames, columns and network totals matching the brief. [Replace them with the official files before submission and confirm the resulting behaviour.]
+- **Automated verification.** AI tools generated the engine unit tests and end-to-end walkthrough test, and ran type checks, the production build, both test suites and visual checks at desktop and phone sizes. These tool-run checks are separate from the team's manual acceptance checks recorded above.
+- **Documentation.** AI tools drafted the README, architecture notes, data model and disclosure. The team is responsible for confirming that the final text accurately describes the implementation and its own work.
 
-## Work not AI-assisted
+## How the collaboration worked
 
-- The Designathon design decisions (personas, flows, failure scenarios, visual system), which this build implements, were directed and approved by the team. 
+The team supplied the problem context, approved design and implementation request; the tools supplied analysis, implementation proposals, generated code and automated checks. This distinction recognises the team's product direction while disclosing the extent of AI implementation assistance. Specific human review and refinement should be documented in the team contribution section above.
 
-## How we used the tools
+## AI use at runtime
 
-- The team gave the AI the challenge booklet and the existing Designathon repository and asked it to check every Hackathon requirement and implement what was missing.
-- [Describe how the team reviewed the AI's output: which parts were read line by line, what was changed, what was tested manually on real phones.]
-- No proprietary API-based models are used at runtime. The application contains no AI features; all planning logic is deterministic code in `src/lib/planning/engine.ts`.
+AI tools were used during development. The application does not call AI models at runtime; planning uses deterministic code in `src/lib/planning/engine.ts`.
