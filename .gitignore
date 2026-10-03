@@ -12,3 +12,4 @@ playwright-report/
 
 # Credentials shared privately through the submission form
 SUBMISSION-CREDENTIALS.txt
+DEMO-SCRIPT.md

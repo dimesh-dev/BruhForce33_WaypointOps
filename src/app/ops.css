@@ -94,7 +94,7 @@
   height: 500px; /* close to the art's 3:1 ratio so it is not enlarged */
   border-radius: 18px;
   overflow: hidden;
-  background: #fbfcfd;
+  background: #fff;
   border: 1px solid var(--line);
   display: flex;
   align-items: center;
@@ -108,20 +108,20 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, #fbfcfd 0%, #fbfcfde6 30%, #fbfcfd00 50%);
+  background: linear-gradient(90deg, #fff 0, #fff 440px, #fff0 600px);
   pointer-events: none;
 }
+/* Full-height panel flush with the hero's left edge; the art fades into it. */
 .login-panel {
   position: relative;
   z-index: 1;
-  width: min(400px, 100%);
-  margin-left: clamp(24px, 5vw, 64px);
-  padding: 24px 28px 20px;
-  background: #ffffffeb;
-  backdrop-filter: blur(6px);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  box-shadow: 0 18px 50px #233a5714;
+  align-self: stretch;
+  width: min(440px, 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 28px 44px;
+  background: #fff;
 }
 .login-wordmark {
   color: var(--ink);
@@ -269,17 +269,18 @@
   font-size: 11px;
   margin-top: auto;
 }
+@media (max-width: 1180px) {
+  .login-panel {
+    width: 380px;
+    padding: 28px 36px;
+  }
+  .login-hero::after {
+    background: linear-gradient(90deg, #fff 0, #fff 380px, #fff0 470px);
+  }
+}
 @media (max-width: 1000px) {
   .login-roles {
     grid-template-columns: repeat(2, 1fr);
-  }
-  .login-hero::after {
-    background: linear-gradient(
-      90deg,
-      #fbfcfd 0%,
-      #fbfcfdcc 45%,
-      #fbfcfd00 75%
-    );
   }
 }
 @media (max-width: 760px) {
@@ -305,7 +306,7 @@
     margin: 0;
     width: 100%;
     border-radius: 16px 16px 0 0;
-    border-width: 1px 0 0;
+    border-top: 1px solid var(--line);
     box-shadow: none;
     padding: 24px 20px 20px;
     background: #fff;
