@@ -1533,3 +1533,5 @@ details[open] > summary::before {
     color 0.15s,
     background 0.15s;
 }
+.nowrap { white-space: nowrap; }
+.nowrap small { display: inline-flex; align-items: center; gap: 3px; margin-left: 4px; }

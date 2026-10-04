@@ -121,9 +121,13 @@ export function CapacityPage({ runDate }: { runDate: string }) {
                         {total.toFixed(0)}
                       </td>
                       <td>
-                        {fresh?.total_volume_m3.toFixed(0) ?? 0} ·{" "}
-                        <Snowflake size={11} />{" "}
-                        {fresh?.chilled_volume_m3.toFixed(0) ?? 0}
+                        <span className="nowrap">
+                          {fresh?.total_volume_m3.toFixed(0) ?? 0}{" "}
+                          <small className="muted">
+                            <Snowflake size={11} />{" "}
+                            {fresh?.chilled_volume_m3.toFixed(0) ?? 0}
+                          </small>
+                        </span>
                       </td>
                       <td>{get("Style")?.total_volume_m3.toFixed(0) ?? 0}</td>
                       <td>{get("Tech")?.total_volume_m3.toFixed(0) ?? 0}</td>
