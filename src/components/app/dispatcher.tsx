@@ -112,14 +112,6 @@ export function DispatcherWorkspace({
           >
             <RotateCcw size={15} /> Reset demo
           </button>
-          {page !== "Dispatch planner" && (
-            <button
-              className="btn primary"
-              onClick={() => go("Dispatch planner")}
-            >
-              Plan this run <ArrowRight size={16} />
-            </button>
-          )}
         </div>
       </div>
       {error && !data && (

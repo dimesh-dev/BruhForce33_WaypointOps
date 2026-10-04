@@ -1853,3 +1853,12 @@ details[open] > summary::before {
     display: none;
   }
 }
+/* Dialogs: space between the explanation and whatever follows it. */
+.modal-intro { margin: 0 0 20px; }
+.modal-content > .btn.full:last-child { margin-top: 4px; }
+@media (max-width: 900px) {
+  /* Date and Reset share one row. */
+  .page-heading .heading-actions { grid-template-columns: 1fr auto; }
+  .page-heading .heading-actions > .wp-date { grid-column: auto; }
+  .page-heading .heading-actions > .btn:last-child:nth-child(2) { grid-column: auto; }
+}
