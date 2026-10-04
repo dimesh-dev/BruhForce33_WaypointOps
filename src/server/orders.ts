@@ -1,5 +1,5 @@
 import { one, tx } from "./db.ts";
-import { cutoffFor, now, orderingRunDate } from "./clock.ts";
+import { cutoffFor, dayLabel, now, orderingRunDate } from "./clock.ts";
 import { emit } from "./events.ts";
 import { HttpError } from "./http-error.ts";
 import type { SessionUser } from "./users.ts";
@@ -80,7 +80,7 @@ export async function placeOrder(user: SessionUser, input: NewOrder) {
   });
   await emit({
     type: "order.placed",
-    title: `${outlet.name} ordered for ${runDate}`,
+    title: `${outlet.name} ordered for ${dayLabel(runDate)}`,
     detail: `${orderId}: ${input.units} units ${input.temp_requirement}, ${input.volume_m3} m³, ${input.weight_kg} kg.`,
     actor_id: user.id,
     order_id: orderId,

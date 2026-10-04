@@ -702,7 +702,7 @@ table.dense th {
 .issue-list {
   display: grid;
   gap: 10px;
-  padding: 0 20px 20px;
+  padding: 18px 20px 20px;
 }
 .issue-card {
   display: flex;
@@ -1533,5 +1533,323 @@ details[open] > summary::before {
     color 0.15s,
     background 0.15s;
 }
-.nowrap { white-space: nowrap; }
-.nowrap small { display: inline-flex; align-items: center; gap: 3px; margin-left: 4px; }
+.nowrap {
+  white-space: nowrap;
+}
+.nowrap small {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: 4px;
+}
+
+/* ------------------------------------------------------- layout audit fixes */
+.show-all {
+  display: block;
+  margin: 12px auto 16px;
+}
+.issue-list {
+  padding-top: 18px;
+}
+.back-link {
+  margin: 4px 0 10px;
+  padding: 4px 0;
+}
+.task-panel > .back-link {
+  margin-left: 2px;
+}
+.metric-note {
+  line-height: 1.45;
+}
+.store-order .arrival-time {
+  padding: 12px 0 4px;
+}
+.store-order .delivery-timeline {
+  margin: 18px 0 24px;
+}
+.driver-stop h2 {
+  line-height: 1.15;
+}
+.panel-header {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+@media (max-width: 700px) {
+  /* Page header actions: date on its own row, the two buttons side by side. */
+  .page-heading .heading-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    gap: 8px;
+    padding-top: 14px;
+  }
+  .page-heading .heading-actions > .wp-date {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+  .page-heading .heading-actions > .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Hero: keep the headline readable over the illustration. */
+  .hero .hero-art {
+    opacity: 0.35;
+  }
+
+  /* Run steps: one compact row that scrolls sideways. */
+  .run-steps {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .run-steps li {
+    flex: none;
+    padding: 6px 10px;
+  }
+
+  /* Filters: search on its own row, filters split the next row. */
+  .table-toolbar {
+    flex-wrap: wrap;
+    padding: 0 14px;
+  }
+  .table-filters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+  .table-filters > .search-input {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+  .table-filters > .wp-select.compact {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Tables become labelled cards (labels come from the column headers). */
+  .table-scroll {
+    overflow-x: visible;
+  }
+  .table-scroll table,
+  .table-scroll tbody,
+  .table-scroll tr,
+  .table-scroll td {
+    display: block;
+    width: 100%;
+  }
+  .table-scroll thead {
+    display: none;
+  }
+  .table-scroll tr {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .table-scroll td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 0 !important;
+    border: 0 !important;
+    text-align: right;
+    min-height: 0;
+  }
+  .table-scroll td::before {
+    content: attr(data-label);
+    flex: none;
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+  }
+  .table-scroll td:first-child {
+    display: block;
+    text-align: left;
+    padding-bottom: 8px !important;
+  }
+  .table-scroll td:first-child::before {
+    display: none;
+  }
+  .table-scroll td:empty {
+    display: none;
+  }
+  /* Unlabelled cells hold actions: right-aligned, no label. */
+  .table-scroll td:not([data-label]):not(:first-child) {
+    justify-content: flex-end;
+  }
+  .table-scroll td:not([data-label])::before {
+    display: none;
+  }
+  .table-scroll .reason-cell {
+    max-width: none;
+    text-align: right;
+  }
+  .table-scroll td .block {
+    display: block;
+  }
+  .meter-cell {
+    min-width: 0;
+  }
+  .meter-cell .capacity {
+    flex: 1;
+    max-width: 220px;
+  }
+  .bar-cell {
+    display: none;
+  }
+
+  /* Issue cards: text uses the full width, badge and button underneath. */
+  .issue-card {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    column-gap: 10px;
+    row-gap: 8px;
+  }
+  .issue-card > .badge,
+  .issue-card > .btn {
+    grid-column: 2;
+    justify-self: start;
+  }
+  .issue-card .eyebrow {
+    letter-spacing: 0.08em;
+  }
+}
+/* The alerts panel must sit above its click-away scrim (z 70) to scroll and take clicks. */
+.notification-panel {
+  z-index: 80;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+@media (max-width: 900px) {
+  .page-heading {
+    flex-wrap: wrap;
+  }
+  .page-heading .heading-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    gap: 8px;
+    padding-top: 14px;
+  }
+  .page-heading .heading-actions > .wp-date {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+  .page-heading .heading-actions > .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .page-heading .heading-actions > .btn:only-of-type {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 700px) {
+  .notification-panel {
+    position: fixed;
+    top: 64px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-height: calc(100vh - 84px);
+  }
+}
+@media (max-width: 700px) {
+  /* Card rows: let values wrap inside the phone width (desktop tables keep nowrap). */
+  .table-scroll table {
+    white-space: normal;
+    min-width: 0 !important;
+    table-layout: auto;
+  }
+  .table-scroll td > * {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .table-scroll td::before {
+    max-width: 40%;
+  }
+  .table-scroll .order-name {
+    padding: 0;
+  }
+}
+@media (max-width: 900px) {
+  /* Only Reset is shown on the planner page: let it span the row. */
+  .page-heading .heading-actions > .btn:last-child:nth-child(2) {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 700px) {
+  /* Label floats left; the value's pieces stay together, right-aligned. */
+  .table-scroll td {
+    display: block;
+    text-align: right;
+    overflow: hidden;
+  }
+  .table-scroll td::before {
+    float: left;
+    margin-right: 12px;
+    line-height: 1.9;
+  }
+  .table-scroll td > .block {
+    display: block;
+  }
+  .table-scroll td .mini-progress {
+    display: inline-flex;
+    width: 110px;
+    vertical-align: middle;
+    margin: 0 6px 0 0;
+  }
+  .table-scroll td .badge {
+    display: inline-flex;
+  }
+  .table-scroll td .capacity {
+    display: inline-block;
+    width: 60%;
+    text-align: left;
+  }
+}
+@media (max-width: 700px) {
+  .table-scroll td::before {
+    font-family: "DM Sans Variable", sans-serif;
+  }
+  .nowrap small {
+    font-size: inherit;
+  }
+}
+@media (min-width: 701px) and (max-width: 1100px) {
+  /* Tablet: let wide tables wrap so the last column (actions, status) stays visible. */
+  .table-scroll table {
+    white-space: normal;
+    min-width: 0 !important;
+  }
+  .meter-cell {
+    min-width: 140px;
+  }
+  .table-scroll td,
+  .table-scroll th {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+@media (min-width: 701px) and (max-width: 850px) {
+  /* Icon-rail sidebar: only icons fit. */
+  .sidebar {
+    overflow: hidden;
+  }
+  .sidebar .network-card {
+    display: none;
+  }
+}
+@media (min-width: 701px) and (max-width: 850px) {
+  .sidebar .wordmark {
+    font-size: 0;
+    gap: 0;
+    justify-content: center;
+  }
+  .sidebar .wordmark .wordmark-dot {
+    display: none;
+  }
+}

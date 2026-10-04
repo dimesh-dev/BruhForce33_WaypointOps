@@ -39,6 +39,16 @@ export function colomboInstant(date: string, minutes: number): Date {
   );
 }
 
+/** "Wed 8 Apr" for notification text. */
+export function dayLabel(date: string): string {
+  return new Date(`${date}T00:00:00Z`).toLocaleDateString("en-GB", {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    timeZone: "UTC",
+  });
+}
+
 export function addDays(date: string, days: number): string {
   const d = new Date(`${date}T00:00:00Z`);
   d.setUTCDate(d.getUTCDate() + days);

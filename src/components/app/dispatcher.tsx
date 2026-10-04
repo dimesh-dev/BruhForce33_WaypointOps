@@ -112,12 +112,14 @@ export function DispatcherWorkspace({
           >
             <RotateCcw size={15} /> Reset demo
           </button>
-          <button
-            className="btn primary"
-            onClick={() => go("Dispatch planner")}
-          >
-            Plan this run <ArrowRight size={16} />
-          </button>
+          {page !== "Dispatch planner" && (
+            <button
+              className="btn primary"
+              onClick={() => go("Dispatch planner")}
+            >
+              Plan this run <ArrowRight size={16} />
+            </button>
+          )}
         </div>
       </div>
       {error && !data && (
@@ -175,9 +177,25 @@ function ResetDialog({ onClose }: { onClose: () => void }) {
   );
 }
 
+const BOARD_ROWS = 8;
+
 function Overview({ board, go }: DispatchProps) {
+  const [showAll, setShowAll] = useState(false);
   const liveTrips =
     board.active_plan?.status === "published" ? board.trips : [];
+  // Trips with something happening first, so the short list shows what matters.
+  const order = {
+    in_transit: 0,
+    blocked: 1,
+    ready: 2,
+    loading: 3,
+    planned: 4,
+    completed: 5,
+  } as Record<string, number>;
+  const boardTrips = [...liveTrips].sort(
+    (a, b) => (order[a.status] ?? 9) - (order[b.status] ?? 9),
+  );
+  const visibleTrips = showAll ? boardTrips : boardTrips.slice(0, BOARD_ROWS);
   const stops = liveTrips.flatMap((t) => t.stops);
   const delivered = stops.filter((s) => s.status === "delivered").length;
   const openIssues = board.issues.filter((i) => i.status === "open");
@@ -357,7 +375,7 @@ function Overview({ board, go }: DispatchProps) {
                   </tr>
                 </thead>
                 <tbody>
-                  {liveTrips.map((t) => {
+                  {visibleTrips.map((t) => {
                     const done = t.stops.filter(
                       (s) => s.status === "delivered" || s.status === "failed",
                     ).length;
@@ -412,6 +430,16 @@ function Overview({ board, go }: DispatchProps) {
                   })}
                 </tbody>
               </table>
+              {liveTrips.length > BOARD_ROWS && (
+                <button
+                  className="text-btn show-all"
+                  onClick={() => setShowAll(!showAll)}
+                >
+                  {showAll
+                    ? "Show fewer trips"
+                    : `Show all ${liveTrips.length} trips`}
+                </button>
+              )}
             </div>
           )}
         </section>

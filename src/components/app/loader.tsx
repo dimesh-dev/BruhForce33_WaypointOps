@@ -259,7 +259,8 @@ function TripLoading({
             <div>
               <b>Shortfall reported · {i.order_id} · waiting for dispatcher</b>
               <p>
-                {i.category}: {i.units_affected} unit{i.units_affected === 1 ? "" : "s"}. {i.description}
+                {i.category}: {i.units_affected} unit
+                {i.units_affected === 1 ? "" : "s"}. {i.description}
               </p>
             </div>
           </div>

@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AlertTriangle,
   BarChart3,
@@ -22,7 +22,7 @@ import type { LucideIcon } from "lucide-react";
 import { api, useApi } from "@/lib/client/api";
 import { colomboTime, longDate, relative } from "@/lib/client/format";
 import type { AppEvent, Me, User } from "@/lib/client/types";
-import { ToastProvider } from "@/lib/client/ui";
+import { ToastProvider, useTableLabels } from "@/lib/client/ui";
 import {
   DispatcherWorkspace,
   DISPATCH_PAGES,
@@ -72,6 +72,8 @@ export function WaypointApp({ user }: { user: User }) {
   const [inbox, setInbox] = useState(false);
   const [seen, setSeen] = useState(0);
   const [collapsed, setCollapsed] = useState(false);
+  const mainRef = useRef<HTMLElement>(null);
+  useTableLabels(mainRef);
   const me = useApi<Me>("/api/me", 30000);
   const events = useApi<{ events: AppEvent[] }>("/api/events", 10000);
 
@@ -324,7 +326,7 @@ export function WaypointApp({ user }: { user: User }) {
               </span>
             </div>
           </header>
-          <main id="main-content">
+          <main id="main-content" ref={mainRef}>
             {!me.data ? (
               <div className="loading-state">Loading your workspace…</div>
             ) : user.role === "dispatcher" ? (
