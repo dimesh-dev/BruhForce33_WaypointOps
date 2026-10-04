@@ -4,7 +4,7 @@ import { pool, query, tx } from "./db.ts";
 import { SCHEMA_SQL, SCHEMA_VERSION } from "./schema.ts";
 import { readCsv, readCsvIfExists } from "./csv.ts";
 import { hashPassword } from "./passwords.ts";
-import { addDays, cutoffFor } from "./clock.ts";
+import { addDays, cutoffFor, dayLabel } from "./clock.ts";
 import { loadContext, loadPlanningOrders } from "./planning.ts";
 import { solve } from "../lib/planning/engine.ts";
 import { demandFactor } from "./forecast.ts";
@@ -534,7 +534,7 @@ async function seedScenario(c: pg.PoolClient) {
 
   await c.query(
     `INSERT INTO events(type, title, detail, severity, audience, created_at) VALUES
-      ('orders.queue', 'Orders arriving for ${RUN_DATE}', 'Store orders for the next run close at 16:00 the day before.', 'info', '{dispatcher}', $1),
+      ('orders.queue', 'Orders arriving for ${dayLabel(RUN_DATE)}', 'Store orders for the next run close at 16:00 the day before.', 'info', '{dispatcher}', $1),
       ('deferral.carried', '${carried.length} outlets skipped on the last run', 'Their orders carry priority into this run.', 'warning', '{dispatcher}', $1)`,
     [new Date(DEMO_START)],
   );

@@ -350,13 +350,16 @@ export function StoreView({ me }: { me: Me }) {
                   Next order goes on the {shortDate(clock.ordering_run_date)}{" "}
                   run
                   <b>
-                    Closes{" "}
                     {clock.ordering_cutoff
-                      ? `${shortDate(clock.ordering_cutoff.slice(0, 10))} ${colomboTime(clock.ordering_cutoff)}`
+                      ? colomboTime(clock.ordering_cutoff)
                       : "16:00"}
                   </b>
                   <small>
-                    Now {colomboTime(clock.now)} · {longDate(clock.local_date)}
+                    Order cutoff
+                    {clock.ordering_cutoff
+                      ? ` · ${shortDate(clock.ordering_cutoff.slice(0, 10))}`
+                      : ""}{" "}
+                    · now {colomboTime(clock.now)}
                   </small>
                 </>
               ) : (

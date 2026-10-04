@@ -64,7 +64,8 @@ export function IssuesPage({ board, reload }: DispatchProps) {
                   {[
                     i.vehicle_id && `${i.vehicle_id} trip ${i.trip_no}`,
                     i.outlet_name,
-                    i.units_affected && `${i.units_affected} units`,
+                    i.units_affected &&
+                      `${i.units_affected} unit${i.units_affected === 1 ? "" : "s"}`,
                     i.reported_by_name && `by ${i.reported_by_name}`,
                   ]
                     .filter(Boolean)

@@ -242,7 +242,7 @@ async function apply(
         stop.order_id,
         stop.trip_id,
         stop.outlet_id,
-        `A second record (${outcome}, ${unitsDelivered} units) arrived after ${stop.order_id} was already closed as ` +
+        `A second record (${outcome}, ${unitsDelivered} unit${unitsDelivered === 1 ? "" : "s"}) arrived after ${stop.order_id} was already closed as ` +
           `${prior.rows[0]?.outcome ?? stop.stop_status}. Both proofs are kept for review.`,
         user.id,
       ],

@@ -1,6 +1,6 @@
 import type pg from "pg";
 import { one, query, tx, type Db, pool } from "./db.ts";
-import { nextOperatingDate } from "./clock.ts";
+import { dayLabel, nextOperatingDate } from "./clock.ts";
 import { emit } from "./events.ts";
 import {
   solve,
@@ -393,7 +393,7 @@ export async function publishPlan(planId: number, userId: number) {
   const version = `v${plan.version}`;
   await emit({
     type: "plan.published",
-    title: `Plan ${version} published for ${runDate}`,
+    title: `Plan ${version} published for ${dayLabel(runDate)}`,
     detail: `${notices.served.length} orders scheduled, ${notices.deferred.length} deferred.`,
     severity: "success",
     actor_id: userId,
@@ -403,7 +403,7 @@ export async function publishPlan(planId: number, userId: number) {
     await emit({
       type: "order.scheduled",
       title: `Order ${s.order_id} scheduled`,
-      detail: `Expected arrival ${toHHMM(s.arrival_min)} on ${runDate} (vehicle ${s.vehicle_id}).`,
+      detail: `Expected arrival ${toHHMM(s.arrival_min)} on ${dayLabel(runDate)} (vehicle ${s.vehicle_id}).`,
       order_id: s.order_id,
       outlet_id: s.outlet_id,
       vehicle_id: s.vehicle_id,
@@ -413,7 +413,7 @@ export async function publishPlan(planId: number, userId: number) {
   for (const d of notices.deferred)
     await emit({
       type: "order.deferred",
-      title: `Order ${d.order_id} moved to ${d.to_date}`,
+      title: `Order ${d.order_id} moved to ${dayLabel(d.to_date)}`,
       detail: d.reason,
       severity: "warning",
       order_id: d.order_id,
@@ -431,7 +431,7 @@ export async function closeQueue(runDate: string, userId: number) {
   );
   await emit({
     type: "orders.closed",
-    title: `Order queue closed for ${runDate}`,
+    title: `Order queue closed for ${dayLabel(runDate)}`,
     detail: "New store orders now join the following operating run.",
     actor_id: userId,
     audience: ["dispatcher", "store_manager"],

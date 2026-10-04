@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
   type ReactNode,
+  type RefObject,
 } from "react";
 import { AlertTriangle, CheckCircle2, X } from "lucide-react";
 
@@ -58,6 +59,43 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       )}
     </ToastContext.Provider>
   );
+}
+
+/* --------------------------------------------------------- table labels */
+
+/**
+ * Copies each table's column headers onto its cells as data-label, so the
+ * phone layout can show rows as labelled cards. Watches for re-renders.
+ */
+export function useTableLabels(root: RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+    let frame = 0;
+    const label = () => {
+      frame = 0;
+      el.querySelectorAll("table").forEach((table) => {
+        const heads = [...table.querySelectorAll("thead th")].map(
+          (th) => th.textContent?.trim() ?? "",
+        );
+        table.querySelectorAll("tbody tr").forEach((tr) =>
+          [...tr.children].forEach((td, i) => {
+            if (heads[i] && td.getAttribute("data-label") !== heads[i])
+              td.setAttribute("data-label", heads[i]);
+          }),
+        );
+      });
+    };
+    const observer = new MutationObserver(() => {
+      if (!frame) frame = requestAnimationFrame(label);
+    });
+    observer.observe(el, { childList: true, subtree: true });
+    label();
+    return () => {
+      observer.disconnect();
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [root]);
 }
 
 /* ----------------------------------------------------------------- dialog */

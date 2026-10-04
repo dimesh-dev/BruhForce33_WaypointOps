@@ -2,7 +2,7 @@ import type pg from "pg";
 import { one, query, tx } from "./db.ts";
 import { emit } from "./events.ts";
 import { HttpError } from "./http-error.ts";
-import { nextOperatingDate } from "./clock.ts";
+import { dayLabel, nextOperatingDate } from "./clock.ts";
 import type { SessionUser } from "./users.ts";
 
 /*
@@ -233,7 +233,7 @@ export async function resolveIssue(
         "UPDATE orders SET status = 'deferred', run_date = $2, deferred_count = deferred_count + 1 WHERE order_id = $1",
         [issue.order_id, next],
       );
-      detail = `Order ${issue.order_id} moved to ${next}. ${input.note}`;
+      detail = `Order ${issue.order_id} moved to ${dayLabel(next)}. ${input.note}`;
     }
     await c.query(
       "UPDATE issues SET status = 'resolved', resolution = $2, resolved_by = $3, resolved_at = now() WHERE id = $1",
